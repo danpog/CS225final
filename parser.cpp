@@ -6,12 +6,9 @@
 #include <iostream>
 #include <fstream>
 
-using namespace std;
+#include <json/json.h>
 
-int main()  {
-    std::cout << "Ran" << std::endl;
-    return 0;
-}
+using namespace std;
 
 vector<Playlist> parse(string filename)    {
     if (filename.empty()) {
@@ -20,6 +17,22 @@ vector<Playlist> parse(string filename)    {
     Playlist p = Playlist();
     vector<Playlist> to_return = vector<Playlist>();
     to_return.push_back(p);
+    
+    Json::Value playlist; 
+
+    std::ifstream playlist_file("SongsLimit.json");
+    playlist_file >> playlist;
+
+    cout << playlist; //This will print the entire json object.
+
+    //The following lines will let you access the indexed objects.
+    cout<<playlist["info"]; //Prints the value for "Anna"
+    //cout<<people["ben"]; //Prints the value for "Ben"
+    //cout<<people["Anna"]["profession"]; //Prints the value corresponding to "profession" in the json for "Anna"
+
+    //cout<<people["profession"];
+
+
     return to_return;
     /*fstream file;
     while (file.good()) {
@@ -29,16 +42,12 @@ vector<Playlist> parse(string filename)    {
     */
 }
 
-/*
-std::ifstream people_file("people.json", std::ifstream::binary);
-    people_file >> people;
+int main()  {
+    std::cout << "Ran" << std::endl;
+    vector<Playlist> a = parse("a");
+    return 0;
+}
 
-    cout<<people; //This will print the entire json object.
 
-    //The following lines will let you access the indexed objects.
-    cout<<people["Anna"]; //Prints the value for "Anna"
-    cout<<people["ben"]; //Prints the value for "Ben"
-    cout<<people["Anna"]["profession"]; //Prints the value corresponding to "profession" in the json for "Anna"
 
-    cout<<people["profession"];
-*/
+
