@@ -29,7 +29,10 @@ vector<Playlist> parse(string filename)    {
 
     for(Json::Value playlist: all_playlists_json["playlists"]) {
         const std::string name = Json::writeString(builder, playlist["name"]);
+        Json::Value pid = playlist["pid"];
+        int id = pid.asInt();
         Playlist p = Playlist(name);
+        p.SetID(id);
         for (Json::Value track: playlist["tracks"]) {
             std::string name = Json::writeString(builder, track["track_name"]);
             std::string artist = Json::writeString(builder, track["artist_name"]);
@@ -37,7 +40,6 @@ vector<Playlist> parse(string filename)    {
             Song s = Song(name, album_name, artist);
             p.AddSong(s);
         }
-        std::cout << p << std::endl;
         all_playlists.push_back(p);
     }
 
@@ -45,8 +47,13 @@ vector<Playlist> parse(string filename)    {
 }
 
 int main()  {
+    //print first playlist
     std::cout << "Ran" << std::endl;
-    vector<Playlist> a = parse("SongsLimit.json");
+    vector<Playlist> a = parse("Songs0-600.json");
+    vector<Song> first = a[0].GetSongs();
+    for (Song i : first) {
+        std::cout << i << std::endl;
+    }
     return 0;
 }
 

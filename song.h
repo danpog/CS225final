@@ -6,7 +6,10 @@ class Song  {
     public:
         Song() = default;
         Song(std::string name, std::string album, std::string artist);
-        std::string toString();
+        std::string toString() const;
+        friend bool operator==(const Song& LHS, const Song& RHS);
+        friend ostream & operator <<(ostream &out, const Song& s);
+        friend bool operator!=(const Song& LHS, const Song& RHS);
 
     private:
         string _name;
