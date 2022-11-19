@@ -9,6 +9,7 @@ class Playlist  {
         Playlist(std::string name): _name(name){};
         Playlist(vector<Song>& songs) : _songs(songs){};
         vector<Song>& GetSongs();
+        Song& GetSong(int i);
         void AddSong(Song& song);
         int SongCount() const;
         int GetID() const;

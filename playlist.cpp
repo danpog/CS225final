@@ -1,4 +1,5 @@
 #include "playlist.h"
+#include <stdexcept>
 using namespace std;
 
 vector<Song>& Playlist::GetSongs() {
@@ -15,6 +16,12 @@ int Playlist::GetID() const {
 }
 void Playlist::SetID(int id)  {
     _id = id;
+}
+Song& Playlist::GetSong(int i) {
+    if (i < 0 || i >= SongCount())  {
+        throw invalid_argument("Get song of index: " + to_string(i) + " is out of bounds.");
+    }
+    return _songs[i];
 }
 
 ostream& operator<<(ostream &out, const Playlist &p)
