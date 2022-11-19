@@ -16,3 +16,15 @@ int Playlist::GetID() const {
 void Playlist::SetID(int id)  {
     _id = id;
 }
+
+ostream& operator<<(ostream &out, const Playlist &p)
+{
+    out << "Name of Playlist: " << p._name << endl;
+    out << "Song count: " << p.SongCount() << endl;
+    for (Song s: p._songs) {
+        out << s.toString() << endl;
+    }
+    out << "---------------------" << endl;
+    return out;
+}
+

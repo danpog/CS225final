@@ -14,37 +14,39 @@ vector<Playlist> parse(string filename)    {
     if (filename.empty()) {
         throw std::invalid_argument("No file name");
     }
-    Playlist p = Playlist();
-    vector<Playlist> to_return = vector<Playlist>();
-    to_return.push_back(p);
     
-    Json::Value playlist; 
+    vector<Playlist> all_playlists = vector<Playlist>();
+   
+    Json::Value all_playlists_json; 
 
-    std::ifstream playlist_file("SongsLimit.json");
-    playlist_file >> playlist;
+    std::ifstream playlist_file(filename);
+    playlist_file >> all_playlists_json;
 
-    cout << playlist; //This will print the entire json object.
+    // cout << all_playlists_json; //This will print the entire json object.
+    cout<<all_playlists_json["info"]; //Prints the value for "Anna"
+    Json::StreamWriterBuilder builder;
+    // builder["indentation"] = ""; // If you want whitespace-less output
 
-    //The following lines will let you access the indexed objects.
-    cout<<playlist["info"]; //Prints the value for "Anna"
-    //cout<<people["ben"]; //Prints the value for "Ben"
-    //cout<<people["Anna"]["profession"]; //Prints the value corresponding to "profession" in the json for "Anna"
+    for(Json::Value playlist: all_playlists_json["playlists"]) {
+        const std::string name = Json::writeString(builder, playlist["name"]);
+        Playlist p = Playlist(name);
+        for (Json::Value track: playlist["tracks"]) {
+            std::string name = Json::writeString(builder, track["track_name"]);
+            std::string artist = Json::writeString(builder, track["artist_name"]);
+            std::string album_name = Json::writeString(builder, track["album_name"]);
+            Song s = Song(name, album_name, artist);
+            p.AddSong(s);
+        }
+        std::cout << p << std::endl;
+        all_playlists.push_back(p);
+    }
 
-    //cout<<people["profession"];
-
-
-    return to_return;
-    /*fstream file;
-    while (file.good()) {
-        string n;
-        cin >> n; // takes in all the other inputs
-    } 
-    */
+    return all_playlists;
 }
 
 int main()  {
     std::cout << "Ran" << std::endl;
-    vector<Playlist> a = parse("a");
+    vector<Playlist> a = parse("SongsLimit.json");
     return 0;
 }
 
