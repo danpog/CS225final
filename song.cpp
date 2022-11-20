@@ -10,6 +10,10 @@ std::string Song::toString() const {
     return to_return;
 }
 
+std::string Song::GetArtist() const {
+    return _artist;
+}
+
 bool operator==(const Song& LHS, const Song& RHS)    {
     return LHS._name == RHS._name && LHS._album == RHS._album && LHS._artist == RHS._artist;
 }

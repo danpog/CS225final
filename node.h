@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <set>
 #include <vector>
 #include "song.h"
 using namespace std;
@@ -14,7 +15,7 @@ class Node  {
         void AddSong(Song& song);
         int SongCount() const {return _neighbors.size();};
         vector<std::pair<Node*, double>>& GetNeighbors() {return _neighbors;};
-        void AddNeighbor(std::pair<Node*, double> node_weight_pair);
+        void AddNeighbor(Node* node);
         double GetWeight(Node* node);
         double GetWeight(string artist);
 

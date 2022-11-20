@@ -1,10 +1,14 @@
 #include "song.h"
 #include "playlist.h"
+#include "node.h"
+#include "graph.h"
 
 #include <vector>
 #include <string>
+#include <map>
 #include <iostream>
 #include <fstream>
+#include <ctime>
 
 #include <json/json.h>
 
@@ -47,13 +51,31 @@ vector<Playlist> parse(string filename)    {
 }
 
 int main()  {
-    //print first playlist
-    std::cout << "Ran" << std::endl;
     vector<Playlist> a = parse("Songs0-600.json");
+    /*
+    //print first playlist
     vector<Song> first = a[0].GetSongs();
     for (Song i : first) {
         std::cout << i << std::endl;
     }
+    */
+    
+    //test graph class
+    time_t t = time(0);
+    Graph graph = Graph();
+    for(Playlist playlist: a) {
+        graph.analyze_playlist(playlist);
+    }
+    t = time(0) - t;
+    string artist1 = a[0].GetSong(0).GetArtist();
+    cout << endl << artist1 << endl;
+    vector<std::pair<Node*, double>> neighbors = graph.FindNeighbors(artist1);
+    for (std::pair<Node*, double> neighbor: neighbors) {
+        if (neighbor.second > 3) {
+            cout << neighbor.first->GetArtist() << "  " << neighbor.second << endl;
+        }
+    }
+    cout << endl << "Graph generated in "<< t << "s" << endl;
     return 0;
 }
 
