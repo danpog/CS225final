@@ -13,7 +13,6 @@ using namespace std;
 void Graph::analyze_playlist(Playlist playlist) {
     Song key_song;
     Song value_song;
-    Node test;
     update_graph(playlist);
     for (int i = 0; i < playlist.SongCount(); i++) {
         key_song = playlist.GetSong(i);
@@ -22,7 +21,6 @@ void Graph::analyze_playlist(Playlist playlist) {
             value_song = playlist.GetSong(j);
             if (key_song != value_song) {
                 _graph[key_song.GetArtist()].AddNeighbor(&_graph[value_song.GetArtist()]);
-                //test = _graph[key_song.GetArtist()]
             }
         }
     }
@@ -35,12 +33,11 @@ void Graph::update_graph(Playlist playlist) {
         song = playlist.GetSong(i);
         artist = song.GetArtist();
         _graph.insert(pair<string, Node>(artist, Node(artist)));
-        //_graph.insert(pair<string, Node>(artist, Node()));
     }
 }
 
-Node Graph::GetNode(string artist) {
-    return _graph[artist];
+Node* Graph::GetNode(string artist) {
+    return &_graph[artist];
 }
 
 vector<std::pair<Node*, double>>& Graph::FindNeighbors(string artist) {

@@ -71,7 +71,9 @@ int main()  {
     cout << endl << artist1 << endl;
     vector<std::pair<Node*, double>> neighbors = graph.FindNeighbors(artist1);
     for (std::pair<Node*, double> neighbor: neighbors) {
-        cout << neighbor.first->GetArtist() << "  " << neighbor.second << endl;
+        if (neighbor.second > 3) {
+            cout << neighbor.first->GetArtist() << "  " << neighbor.second << endl;
+        }
     }
     cout << endl << "Graph generated in "<< t << "s" << endl;
     return 0;
