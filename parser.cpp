@@ -69,10 +69,11 @@ int main()  {
     t = time(0) - t;
     string artist1 = a[0].GetSong(0).GetArtist();
     cout << endl << artist1 << endl;
-    vector<std::pair<Node*, double>> neighbors = graph.FindNeighbors(artist1);
-    for (std::pair<Node*, double> neighbor: neighbors) {
-        if (neighbor.second > 3) {
-            cout << neighbor.first->GetArtist() << "  " << neighbor.second << endl;
+    map<Node*, double> neighbors = graph.FindNeighbors(artist1);
+    map<Node*, double>::iterator it;
+    for (it = neighbors.begin(); it != neighbors.end(); it++) {
+        if (it->second > 3) {
+            cout << it->first->GetArtist() << " " << it->second << endl;
         }
     }
     cout << endl << "Graph generated in "<< t << "s" << endl;

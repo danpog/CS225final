@@ -2,6 +2,7 @@
 #include <string>
 #include <set>
 #include <vector>
+#include <map>
 #include "song.h"
 using namespace std;
 
@@ -14,7 +15,7 @@ class Node  {
         Song& RequestSong();
         void AddSong(Song& song);
         int SongCount() const {return _neighbors.size();};
-        vector<std::pair<Node*, double>>& GetNeighbors() {return _neighbors;};
+        map<Node*, double>& GetNeighbors() {return _neighbors;};
         void AddNeighbor(Node* node);
         double GetWeight(Node* node);
         double GetWeight(string artist);
@@ -27,6 +28,5 @@ class Node  {
         string _artist;
         vector<Song> _popular_songs;
         size_t _position = 0;
-        vector<std::pair<Node*, double>> _neighbors;
-        int AddNeighborRecursive(Node* node, int min, int max);
+        map<Node*, double> _neighbors;
 };
