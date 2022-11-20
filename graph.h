@@ -11,6 +11,7 @@
 class Graph {
     public: 
         Graph() = default;
+        Graph(vector<Playlist>& playlists);
         void analyze_playlist(Playlist playlist);
         Node* GetNode(string artist);
         map<Node*, double>& FindNeighbors(string artist);

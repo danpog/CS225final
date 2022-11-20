@@ -10,6 +10,12 @@
 
 using namespace std;
 
+Graph::Graph(vector<Playlist>& playlists)    {
+    for(Playlist playlist: playlists) {
+        analyze_playlist(playlist);
+    }
+}
+
 void Graph::analyze_playlist(Playlist playlist) {
     Song key_song;
     Song value_song;

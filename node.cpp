@@ -23,10 +23,8 @@ void Node::AddSong(Song& song)    {
     _popular_songs.push_back(song);
 }
 void Node::AddNeighbor(Node* node)   {
-    _neighbors.insert(std::pair<Node*, double>(node, 0));
-    _neighbors[node]++;
-    node->GetNeighbors().insert(std::pair<Node*, double>(this, 0));
-    node->GetNeighbors()[this]++;
+    _neighbors.insert(std::pair<Node*, double>(node, 0)).first -> second++;
+    node->GetNeighbors().insert(std::pair<Node*, double>(this, 0)).first -> second++;
 }
 
 double Node::GetWeight(Node* node)  {
