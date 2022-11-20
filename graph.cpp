@@ -19,7 +19,7 @@ void Graph::analyze_playlist(Playlist playlist) {
         _graph[key_song.GetArtist()].AddSong(key_song);
         for (int j = i; j < playlist.SongCount(); j++) {
             value_song = playlist.GetSong(j);
-            if (key_song != value_song) {
+            if (key_song.GetArtist() != value_song.GetArtist()) {
                 _graph[key_song.GetArtist()].AddNeighbor(&_graph[value_song.GetArtist()]);
             }
         }
