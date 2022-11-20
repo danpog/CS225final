@@ -40,6 +40,6 @@ Node* Graph::GetNode(string artist) {
     return &_graph[artist];
 }
 
-vector<std::pair<Node*, double>>& Graph::FindNeighbors(string artist) {
+map<Node*, double>& Graph::FindNeighbors(string artist) {
     return _graph[artist].GetNeighbors();
 }
