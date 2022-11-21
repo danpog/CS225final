@@ -3,6 +3,7 @@
 #include <set>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include "song.h"
 using namespace std;
 
@@ -15,7 +16,7 @@ class Node  {
         Song& RequestSong();
         void AddSong(Song& song);
         int SongCount() const {return _popular_songs.size();};
-        map<Node*, double>& GetNeighbors() {return _neighbors;};
+        unordered_map<Node*, double>& GetNeighbors() {return _neighbors;};
         void AddNeighbor(Node* node);
         double GetWeight(Node* node);
         double GetWeight(string artist);
@@ -28,5 +29,5 @@ class Node  {
         string _artist;
         vector<pair<Song,int>> _popular_songs;
         size_t _position = 0;
-        map<Node*, double> _neighbors;
+        unordered_map<Node*, double> _neighbors;
 };

@@ -52,6 +52,9 @@ vector<Playlist> parse(string filename)    {
 }
 
 int main()  {
+    chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
+    chrono::system_clock::now().time_since_epoch()
+    );
     vector<Playlist> a = parse("Songs0-600.json");
     /*
     //print first playlist
@@ -62,9 +65,6 @@ int main()  {
     */
     
     //test graph class
-    chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
-    chrono::system_clock::now().time_since_epoch()
-    );
 
     //make graph
     Graph graph = Graph(a);
@@ -78,8 +78,8 @@ int main()  {
 
     string artist1 = a[0].GetSong(0).GetArtist();
     cout << endl << artist1 << endl;
-    map<Node*, double> neighbors = graph.FindNeighbors(artist1);
-    map<Node*, double>::iterator it;
+    unordered_map<Node*, double> neighbors = graph.FindNeighbors(artist1);
+    unordered_map<Node*, double>::iterator it;
     /*Node* n = graph.GetNode(artist1);
     for (int i = 0; i < n->SongCount(); i++)    {
         cout << n->RequestSong() << endl;

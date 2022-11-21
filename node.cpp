@@ -43,7 +43,7 @@ void Node::AddNeighbor(Node* node)   {
 } //
 
 double Node::GetWeight(Node* node)  {
-    map<Node*, double>::iterator it;
+    unordered_map<Node*, double>::iterator it;
     for (it = _neighbors.begin(); it != _neighbors.end(); it++) {
         if (it->first == node) {
             return it->second;
@@ -52,7 +52,7 @@ double Node::GetWeight(Node* node)  {
     return 0;
 }
 double Node::GetWeight(string artist)   {
-    map<Node*, double>::iterator it;
+    unordered_map<Node*, double>::iterator it;
     for (it = _neighbors.begin(); it != _neighbors.end(); it++) {
         if (it->first -> GetArtist() == artist) {
             return it->second;

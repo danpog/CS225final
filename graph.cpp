@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <unordered_map>
 #include <iostream>
 
 using namespace std;
@@ -48,6 +49,6 @@ Node* Graph::GetNode(string artist) {
     return &_graph[artist];
 }
 
-map<Node*, double>& Graph::FindNeighbors(string artist) {
+unordered_map<Node*, double>& Graph::FindNeighbors(string artist) {
     return _graph[artist].GetNeighbors();
 }
