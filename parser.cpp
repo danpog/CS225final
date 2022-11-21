@@ -63,9 +63,7 @@ int main()  {
     //test graph class
     time_t t = time(0);
     Graph graph = Graph();
-    for(Playlist playlist: a) {
-        graph.analyze_playlist(playlist);
-    }
+    graph.analyze_all_playlists(a);
     t = time(0) - t;
     string artist1 = a[0].GetSong(0).GetArtist();
     cout << endl << artist1 << endl;

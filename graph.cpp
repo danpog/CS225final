@@ -16,7 +16,13 @@ Graph::Graph(vector<Playlist>& playlists)    {
     }
 }
 
-void Graph::analyze_playlist(Playlist playlist) {
+void Graph::analyze_all_playlists(vector<Playlist>& playlists) {
+    for(Playlist playlist: playlists) {
+        analyze_playlist(playlist);
+    }
+}
+
+void Graph::analyze_playlist(Playlist& playlist) {
     Song key_song;
     Song value_song;
     update_graph(playlist);
@@ -32,7 +38,7 @@ void Graph::analyze_playlist(Playlist playlist) {
     }
 }
 
-void Graph::update_graph(Playlist playlist) {
+void Graph::update_graph(Playlist& playlist) {
     string artist;
     Song song;
     for (int i = 0; i < playlist.SongCount(); i++) {

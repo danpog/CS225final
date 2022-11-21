@@ -12,10 +12,11 @@ class Graph {
     public: 
         Graph() = default;
         Graph(vector<Playlist>& playlists);
-        void analyze_playlist(Playlist playlist);
+        void analyze_all_playlists(vector<Playlist>& playlists);
+        void analyze_playlist(Playlist& playlist);
         Node* GetNode(string artist);
         map<Node*, double>& FindNeighbors(string artist);
     private:
-        void update_graph(Playlist playlist);
+        void update_graph(Playlist& playlist);
         map<string, Node> _graph;
 };
