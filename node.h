@@ -10,11 +10,11 @@ class Node  {
     public:
         Node() = default;
         Node(string artist);
-        Node(string artist, vector<Song>& songs);
+        Node(string artist, vector<pair<Song,int>>& songs);
         string GetArtist() const {return _artist;};
         Song& RequestSong();
         void AddSong(Song& song);
-        int SongCount() const {return _neighbors.size();};
+        int SongCount() const {return _popular_songs.size();};
         map<Node*, double>& GetNeighbors() {return _neighbors;};
         void AddNeighbor(Node* node);
         double GetWeight(Node* node);
@@ -26,7 +26,7 @@ class Node  {
 
     private:
         string _artist;
-        vector<Song> _popular_songs;
+        vector<pair<Song,int>> _popular_songs;
         size_t _position = 0;
         map<Node*, double> _neighbors;
 };

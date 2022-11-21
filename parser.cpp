@@ -9,6 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <chrono>
 
 #include <json/json.h>
 
@@ -61,19 +62,36 @@ int main()  {
     */
     
     //test graph class
-    time_t t = time(0);
-    Graph graph = Graph();
-    graph.analyze_all_playlists(a);
-    t = time(0) - t;
-    string artist1 = a[0].GetSong(0).GetArtist();
+    chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
+    chrono::system_clock::now().time_since_epoch()
+    );
+
+    //make graph
+    Graph graph = Graph(a);
+    
+    //end time
+    chrono::milliseconds t_final = chrono::duration_cast< chrono::milliseconds >(
+    chrono::system_clock::now().time_since_epoch()
+    );
+    double t = ((t_final-t_start)/1000.0).count();
+
+
+    string artist1 = a[0].GetSong(36).GetArtist();
     cout << endl << artist1 << endl;
     map<Node*, double> neighbors = graph.FindNeighbors(artist1);
     map<Node*, double>::iterator it;
-    for (it = neighbors.begin(); it != neighbors.end(); it++) {
+    Node* n = graph.GetNode(artist1);
+    for (int i = 0; i < n->SongCount(); i++)    {
+        cout << n->RequestSong() << endl;
+    }
+    /*for (it = neighbors.begin(); it != neighbors.end(); it++) {
         if (it->second > 3) {
             cout << it->first->GetArtist() << " " << it->second << endl;
         }
-    }
+    }*/
+    /*for (Song& b : a[0].GetSongs()) {
+        cout << std::hash<Song&>{}(b) << endl;
+    }*/
     cout << endl << "Graph generated in "<< t << "s" << endl;
     return 0;
 }

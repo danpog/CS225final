@@ -8,24 +8,39 @@
 using namespace std;
 
 Node::Node(string artist):  _artist(artist) {}
-Node::Node(string artist, vector<Song>& songs): _artist(artist), _popular_songs(songs)  {}
+Node::Node(string artist, vector<pair<Song , int>>& songs): _artist(artist), _popular_songs(songs)  {}
 Song& Node::RequestSong()   {
+    if (SongCount() == 0)   {
+        throw invalid_argument("No songs to give!");
+    }
     if ((int)_position >= SongCount())   {
         //Can modify this so that we know if we've looped back 
         //(yes I know I could use % but this just allows for a print statement or something more easily)
         _position = 0;
     }
-    Song& to_return = _popular_songs[_position];
+    Song& to_return = _popular_songs[_position].first;
     _position++;
     return to_return;
 }
 void Node::AddSong(Song& song)    {
-    _popular_songs.push_back(song);
+
+    Song s =Song(song.GetName(), song.GetAlbum(), song.GetArtist());
+    for (size_t i = 0; i < _popular_songs.size(); i++)  {
+        if (_popular_songs[i].first == song)    {
+            _popular_songs[i].second++;
+            while (i != 0 && _popular_songs[i].second > _popular_songs[i-1].second) {
+                swap(_popular_songs[i], _popular_songs[i-1]);
+                i--;
+            }
+            return;
+        }
+    }
+    _popular_songs.push_back(pair<Song&, int>(song, 1));
 }
 void Node::AddNeighbor(Node* node)   {
     _neighbors.insert(std::pair<Node*, double>(node, 0)).first -> second++;
     node->GetNeighbors().insert(std::pair<Node*, double>(this, 0)).first -> second++;
-}
+} //
 
 double Node::GetWeight(Node* node)  {
     map<Node*, double>::iterator it;
