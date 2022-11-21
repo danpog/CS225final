@@ -76,19 +76,19 @@ int main()  {
     double t = ((t_final-t_start)/1000.0).count();
 
 
-    string artist1 = a[0].GetSong(36).GetArtist();
+    string artist1 = a[0].GetSong(0).GetArtist();
     cout << endl << artist1 << endl;
     map<Node*, double> neighbors = graph.FindNeighbors(artist1);
     map<Node*, double>::iterator it;
-    Node* n = graph.GetNode(artist1);
+    /*Node* n = graph.GetNode(artist1);
     for (int i = 0; i < n->SongCount(); i++)    {
         cout << n->RequestSong() << endl;
-    }
-    /*for (it = neighbors.begin(); it != neighbors.end(); it++) {
+    }*/
+    for (it = neighbors.begin(); it != neighbors.end(); it++) {
         if (it->second > 3) {
             cout << it->first->GetArtist() << " " << it->second << endl;
         }
-    }*/
+    }
     /*for (Song& b : a[0].GetSongs()) {
         cout << std::hash<Song&>{}(b) << endl;
     }*/

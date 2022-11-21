@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <unordered_map>
 #include <iostream>
 
 class Graph {
@@ -18,5 +19,5 @@ class Graph {
         map<Node*, double>& FindNeighbors(string artist);
     private:
         void update_graph(Playlist& playlist);
-        map<string, Node> _graph;
+        unordered_map<string, Node> _graph;
 };
