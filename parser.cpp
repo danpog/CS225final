@@ -55,21 +55,12 @@ int main()  {
     chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
-    vector<Playlist> a = parse("Songs0-600.json");
-    /*
-    //print first playlist
-    vector<Song> first = a[0].GetSongs();
-    for (Song i : first) {
-        std::cout << i << std::endl;
+    Graph graph = Graph();
+    vector<Playlist> a;
+    for (int i = 0; i < 4000; i += 1000) {
+        a = parse("mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
+        graph.analyze_all_playlists(a);
     }
-    */
-    
-    //test graph class
-
-    //make graph
-    Graph graph = Graph(a);
-    
-    //end time
     chrono::milliseconds t_final = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
@@ -85,7 +76,7 @@ int main()  {
         cout << n->RequestSong() << endl;
     }*/
     for (it = neighbors.begin(); it != neighbors.end(); it++) {
-        if (it->second > 3) {
+        if (it->second > 20) {
             cout << it->first->GetArtist() << " " << it->second << endl;
         }
     }
