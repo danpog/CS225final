@@ -21,14 +21,13 @@ vector<Playlist> parse(string filename)    {
     }
     
     vector<Playlist> all_playlists = vector<Playlist>();
-   
     Json::Value all_playlists_json; 
 
     std::ifstream playlist_file(filename);
     playlist_file >> all_playlists_json;
 
     // cout << all_playlists_json; //This will print the entire json object.
-    cout<<all_playlists_json["info"]; //Prints the value for "Anna"
+    cout << all_playlists_json["info"]; 
     Json::StreamWriterBuilder builder;
     // builder["indentation"] = ""; // If you want whitespace-less output
 
@@ -58,7 +57,7 @@ int main()  {
     Graph graph = Graph();
     vector<Playlist> a;
     for (int i = 0; i < 4000; i += 1000) {
-        a = parse("mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
+        a = parse("mpdslices/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
         graph.analyze_all_playlists(a);
     }
     chrono::milliseconds t_final = chrono::duration_cast< chrono::milliseconds >(
@@ -69,6 +68,7 @@ int main()  {
 
     string artist1 = a[0].GetSong(0).GetArtist();
     cout << endl << artist1 << endl;
+
     unordered_map<Node*, double> neighbors = graph.FindNeighbors(artist1);
     unordered_map<Node*, double>::iterator it;
     /*Node* n = graph.GetNode(artist1);
