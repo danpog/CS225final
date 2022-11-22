@@ -23,6 +23,9 @@ void Graph::analyze_all_playlists(vector<Playlist>& playlists) {
     }
 }
 
+// Adds a playlist to a graph 
+//      -> Updates the artists popular songs
+//      -> Adds all the neighbors (undirected)
 void Graph::analyze_playlist(Playlist& playlist) {
     update_graph(playlist);
     for (int i = 0; i < playlist.SongCount(); i++) {
@@ -37,6 +40,7 @@ void Graph::analyze_playlist(Playlist& playlist) {
     }
 }
 
+// Ensures that there is a node for each artist in playlist
 void Graph::update_graph(Playlist& playlist) {
     string artist;
     for (int i = 0; i < playlist.SongCount(); i++) {

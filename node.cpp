@@ -19,13 +19,14 @@ Song& Node::RequestSong()   {
         _position = 0;
     }
     Song& to_return = _popular_songs[_position].first;
-    _position++;
+    ++_position;
     return to_return;
 }
-void Node::AddSong(Song& song)    {
 
-    Song s =Song(song.GetName(), song.GetAlbum(), song.GetArtist());
-    for (size_t i = 0; i < _popular_songs.size(); i++)  {
+// Add song to node, updates ranking of popular songs
+void Node::AddSong(Song& song)    {
+    //Song s = Song(song.GetName(), song.GetAlbum(), song.GetArtist());
+    for (size_t i = 0; i < _popular_songs.size(); ++i)  {
         if (_popular_songs[i].first == song)    {
             _popular_songs[i].second++;
             while (i != 0 && _popular_songs[i].second > _popular_songs[i-1].second) {
