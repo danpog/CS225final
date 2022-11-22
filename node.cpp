@@ -30,6 +30,7 @@ void Node::AddSong(Song& song)    {
         if (_popular_songs[i].first == song)    {
             _popular_songs[i].second++;
             while (i != 0 && _popular_songs[i].second > _popular_songs[i-1].second) {
+                std::pair<Song, int> temp = _popular_songs[i];
                 swap(_popular_songs[i], _popular_songs[i-1]);
                 i--;
             }

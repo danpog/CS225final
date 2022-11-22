@@ -2,35 +2,26 @@
 #include <string>
 using namespace std;
 
-class Song  {
+struct Song  {
     public:
-        Song();
-        Song(std::string name, std::string album, std::string artist);
-        std::string toString() const;
-        std::string GetArtist() const {return _artist;};
-        std::string GetName() const{return _name;};
-        std::string GetAlbum() const{return _album;};
+        Song(string n, string al, string ar, string u): _name(n), _album(al), _artist(ar), _uri(u){};
+         string _name;
+         string _album;
+         string _artist;
+         string _uri;
+         size_t _hash = std::hash<string>{}(_uri);
         friend bool operator==(const Song& LHS, const Song& RHS);
-        friend ostream & operator <<(ostream &out, const Song& s);
-        friend bool operator!=(const Song& LHS, const Song& RHS);
-        size_t GetHash() const{return _hash;};
-
-    private:
-        string _name;
-        string _album;
-        string _artist;
-        size_t _hash;
 };
 
-template<>
+/*template<>
 struct std::hash<Song&>
 {
     std::size_t operator()(const Song& s) const noexcept
     {
-        /*std::size_t h1 = std::hash<std::string>{}(s.GetName());
+        std::size_t h1 = std::hash<std::string>{}(s.GetName());
         std::size_t h2 = std::hash<std::string>{}(s.GetArtist());
         std::size_t h3 = std::hash<std::string>{}(s.GetAlbum());
-        return h1 ^ h2 ^ h3; // or use boost::hash_combine*/
-        return s.GetHash();
+        return h1 ^ h2 ^ h3; // or use boost::hash_combine
+        return s._hash;
     }
-};
+};*/

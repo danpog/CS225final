@@ -15,6 +15,10 @@
 
 using namespace std;
 
+void PrintSong(Song& s) {
+    cout << s._name << endl << s._album << endl << s._artist << endl << endl;
+}
+
 vector<Playlist> parse(string filename)    {
     if (filename.empty()) {
         throw std::invalid_argument("No file name");
@@ -41,7 +45,8 @@ vector<Playlist> parse(string filename)    {
             std::string name = Json::writeString(builder, track["track_name"]);
             std::string artist = Json::writeString(builder, track["artist_name"]);
             std::string album_name = Json::writeString(builder, track["album_name"]);
-            Song s = Song(name, album_name, artist);
+            std::string uri = Json::writeString(builder, track["track_uri"]);
+            Song s = Song(name, album_name, artist, uri);
             p.AddSong(s);
         }
         all_playlists.push_back(p);
@@ -58,8 +63,8 @@ int main()  {
     vector<Playlist> a;
 
     // Creating the graph
-    for (int i = 0; i < 4000; i += 1000) {
-        a = parse("mpdslices/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
+    for (int i = 0; i < 000; i += 1000) {
+        a = parse("./mpdslices/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
         graph.analyze_all_playlists(a);
     }
     
@@ -69,7 +74,7 @@ int main()  {
     double t = ((t_final-t_start)/1000.0).count();
 
 
-    string artist1 = a[0].GetSong(0).GetArtist();
+    string artist1 = a[0].GetSong(0)._artist;
     cout << endl << artist1 << endl;
 
     unordered_map<Node*, double> neighbors = graph.FindNeighbors(artist1);
