@@ -18,6 +18,7 @@ class Node  {
         int SongCount() const {return _popular_songs.size();};
         unordered_map<Node*, double>& GetNeighbors() {return _neighbors;};
         void AddNeighbor(Node* node);
+        void TrimNeighbors(size_t size, bool brute);
         double GetWeight(Node* node);
         double GetWeight(string artist);
         friend bool operator<(Node& LHS, Node& RHS);

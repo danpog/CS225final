@@ -63,8 +63,8 @@ int main()  {
     vector<Playlist> a;
 
     // Creating the graph
-    for (int i = 0; i < 000; i += 1000) {
-        a = parse("./mpdslices/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
+    for (int i = 0; i < 4000; i += 1000) {
+        a = parse("mpdslices/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
         graph.analyze_all_playlists(a);
     }
     
@@ -73,19 +73,33 @@ int main()  {
     );
     double t = ((t_final-t_start)/1000.0).count();
 
+    for (auto x: graph.getGraph()) {
+        graph.GetNode(x.first)->TrimNeighbors(5, false);
+    }
 
-    string artist1 = a[0].GetSong(0)._artist;
-    cout << endl << artist1 << endl;
+    chrono::milliseconds t_final_2 = chrono::duration_cast< chrono::milliseconds >(
+    chrono::system_clock::now().time_since_epoch()
+    );
+    double t2 = ((t_final_2-t_final)/1000.0).count();
+    cout << endl << "Neighbor trimmed in "<< t2 << "s" << endl;
 
-    unordered_map<Node*, double> neighbors = graph.FindNeighbors(artist1);
-    unordered_map<Node*, double>::iterator it;
-    /*Node* n = graph.GetNode(artist1);
-    for (int i = 0; i < n->SongCount(); i++)    {
-        cout << n->RequestSong() << endl;
-    }*/
-    for (it = neighbors.begin(); it != neighbors.end(); it++) {
-        if (it->second > 20) {
-            cout << it->first->GetArtist() << " " << it->second << endl;
+    vector<string> artists;
+    artists.push_back("\"Lost Frequencies\"");
+    artists.push_back("\"Michael Jackson\"");
+    artists.push_back("\"Kygo\"");
+
+    for (string artist1 : artists) {
+        std::cout << artist1 << std::endl;
+        unordered_map<Node*, double> neighbors = graph.FindNeighbors(artist1);
+        unordered_map<Node*, double>::iterator it;
+        /*Node* n = graph.GetNode(artist1);
+        for (int i = 0; i < n->SongCount(); i++)    {
+            cout << n->RequestSong() << endl;
+        }*/
+        for (it = neighbors.begin(); it != neighbors.end(); it++) {
+            if (it->second > 20) {
+                cout << it->first->GetArtist() << " " << it->second << endl;
+            }
         }
     }
     /*for (Song& b : a[0].GetSongs()) {

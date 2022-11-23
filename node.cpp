@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <iostream>
+#include <queue>
 
 using namespace std;
 
@@ -43,6 +44,42 @@ void Node::AddNeighbor(Node* node)   {
     _neighbors.insert(std::pair<Node*, double>(node, 0)).first -> second++;
     node->GetNeighbors().insert(std::pair<Node*, double>(this, 0)).first -> second++;
 } //
+
+void Node::TrimNeighbors(size_t size, bool brute) {
+    unordered_map<Node*, double> _new_neighbors;
+    // Brute force taking top 20    
+    if (brute) {       
+        for (size_t i = 0; i < size; ++i) {
+            pair<Node*, double> max = pair<Node*, double>(nullptr, 0.0);
+            for (auto const& x : _neighbors) {
+                if (x.second > max.second) {
+                    max = x;
+                }
+            }
+            _neighbors.erase(max.first);
+            _new_neighbors.insert(max);
+        }
+        _neighbors.clear();
+        _neighbors = _new_neighbors;
+    } else {
+        // Creating a max heap for second element of pair
+        auto cmp = [](const pair<Node*, double>& lhs, const pair<Node*, double>& rhs)
+        { return lhs.second < rhs.second;};
+        priority_queue<pair<Node*, double>, vector<pair<Node*, double>>, decltype(cmp) > pQ(cmp);
+        for(auto const& x : _neighbors) {
+            pQ.push(x);
+        }
+        for (size_t i = 0; i < size; ++i) {
+            auto tmp = pQ.top();
+            //cout << tmp.first << " " << tmp.second << endl;
+            _new_neighbors.insert(tmp);
+            _neighbors.erase(tmp.first);
+            pQ.pop();
+        }
+        _neighbors.clear();
+        _neighbors = _new_neighbors;
+    }
+}
 
 double Node::GetWeight(Node* node)  {
     unordered_map<Node*, double>::iterator it;
