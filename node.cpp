@@ -47,6 +47,7 @@ void Node::AddNeighbor(Node* node)   {
 
 void Node::TrimNeighbors(size_t size, bool brute) {
     unordered_map<Node*, double> _new_neighbors;
+    if (_neighbors.size() <= size) { return; }
     // Brute force taking top 20    
     if (brute) {       
         for (size_t i = 0; i < size; ++i) {
