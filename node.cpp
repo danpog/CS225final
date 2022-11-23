@@ -83,12 +83,16 @@ void Node::TrimNeighbors(size_t size, bool brute) {
 
 double Node::GetWeight(Node* node)  {
     unordered_map<Node*, double>::iterator it;
-    for (it = _neighbors.begin(); it != _neighbors.end(); it++) {
+    if (_neighbors.count(node) == 0)    {
+        return 0;
+    }
+    return _neighbors[node];
+    /*for (it = _neighbors.begin(); it != _neighbors.end(); it++) {
         if (it->first == node) {
             return it->second;
         }
     }
-    return 0;
+    return 0;*/
 }
 double Node::GetWeight(string artist)   {
     unordered_map<Node*, double>::iterator it;
