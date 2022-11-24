@@ -120,16 +120,16 @@ int main()  {
             cout << n->RequestSong()._name << endl;
         }
         cout << endl << endl;
-        n = graph2.GetNode(artist1);
-        for (int i = 0; i < n->SongCount(); i++)    {
-            cout << n->RequestSong()._name << endl;
+        Node* n2 = graph2.GetNode(artist1);
+        for (int i = 0; i < n2->SongCount(); i++)    {
+            cout << n2->RequestSong()._name << endl;
         }
         cout << endl << endl;
         for (it = neighbors.begin(); it != neighbors.end(); it++) {
             cout << it->first->GetArtist() << " " << it->second << endl;
         }
         cout << endl << endl;
-        for (it = neighbors.begin(); it != neighbors.end(); it++) {
+        for (it = neighbors2.begin(); it != neighbors2.end(); it++) {
             cout << it->first->GetArtist() << " " << it->second << endl;
         }
         cout << endl << endl;

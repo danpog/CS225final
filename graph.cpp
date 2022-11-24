@@ -41,13 +41,13 @@ Graph::Graph(string file) {
             _graph[artist].AddNeighborPair(pair<Node*, double>(artist2, frequency));
         }
         for (Json::Value song: node["songs"]) {
-            name = Json::writeString(builder, node["name"]);
-            album = Json::writeString(builder, node["album"]);
-            artist3 = Json::writeString(builder, node["artist"]);
-            uri = Json::writeString(builder, node["uri"]);
-            frequency2 = node["frequency"].asInt();
+            name = Json::writeString(builder, song["name"]);
+            album = Json::writeString(builder, song["album"]);
+            artist3 = Json::writeString(builder, song["artist"]);
+            uri = Json::writeString(builder, song["uri"]);
+            frequency2 = song["frequency"].asInt();
             Song s = Song(name, album, artist3, uri);
-            _graph[artist].AddSongPair(pair<Song&, int>(s, frequency2));
+            _graph[artist].AddSongPair(s, frequency2);
         }
     }
 }

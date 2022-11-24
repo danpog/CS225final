@@ -45,14 +45,8 @@ void Node::AddSong(Song& song)    {
     _popular_songs.push_back(pair<Song&, int>(song, 1));
 }
 
-void Node::AddSongPair(pair<Song&,int> song) {
-    _popular_songs.push_back(song);
-    int j = _popular_songs.size() - 1;
-    for (int i = 0; i < int(_popular_songs.size()) - 1; ++i) {
-        if (_popular_songs[i].second > _popular_songs[j].second) {
-            swap(_popular_songs[i], _popular_songs[j]);
-        }
-    }
+void Node::AddSongPair(Song& song, int frequency) {
+    _popular_songs.push_back(pair<Song&, int>(song, frequency));
 }
 
 void Node::AddNeighbor(Node* node)   {

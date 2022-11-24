@@ -16,7 +16,7 @@ class Node  {
         Song& RequestSong();
         vector<pair<Song,int>> GetAllSongs();
         void AddSong(Song& song);
-        void AddSongPair(pair<Song&,int> song);
+        void AddSongPair(Song& song, int frequency);
         int SongCount() const {return _popular_songs.size();};
         unordered_map<Node*, double>& GetNeighbors() {return _neighbors;};
         void AddNeighbor(Node* node);
