@@ -24,6 +24,10 @@ Song& Node::RequestSong()   {
     return to_return;
 }
 
+vector<pair<Song,int>> Node::GetAllSongs() {
+    return _popular_songs;
+}
+
 // Add song to node, updates ranking of popular songs
 void Node::AddSong(Song& song)    {
     //Song s = Song(song.GetName(), song.GetAlbum(), song.GetArtist());
@@ -40,10 +44,25 @@ void Node::AddSong(Song& song)    {
     }
     _popular_songs.push_back(pair<Song&, int>(song, 1));
 }
+
+void Node::AddSongPair(pair<Song&,int> song) {
+    _popular_songs.push_back(song);
+    int j = _popular_songs.size() - 1;
+    for (int i = 0; i < int(_popular_songs.size()) - 1; ++i) {
+        if (_popular_songs[i].second > _popular_songs[j].second) {
+            swap(_popular_songs[i], _popular_songs[j]);
+        }
+    }
+}
+
 void Node::AddNeighbor(Node* node)   {
     _neighbors.insert(std::pair<Node*, double>(node, 0)).first -> second++;
     node->GetNeighbors().insert(std::pair<Node*, double>(this, 0)).first -> second++;
-} //
+}
+
+void Node::AddNeighborPair(pair<Node*, double> neighbor) {
+    _neighbors.insert(std::pair<Node*, double>(neighbor.first, neighbor.second));
+}
 
 void Node::TrimNeighbors(size_t size, bool brute) {
     unordered_map<Node*, double> _new_neighbors;
