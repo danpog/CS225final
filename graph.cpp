@@ -27,7 +27,7 @@ Graph::Graph(string file) {
     }
 
     Node* artist2;
-    double frequency;
+    int frequency;
     string name;
     string album;
     string artist3;
@@ -37,8 +37,8 @@ Graph::Graph(string file) {
         artist = Json::writeString(builder, node["artist"]);
         for (Json::Value neighbor: node["neighbors"]) {
             artist2 = &_graph[Json::writeString(builder, neighbor["artist"])];
-            frequency = neighbor["frequency"].asDouble();
-            _graph[artist].AddNeighborPair(pair<Node*, double>(artist2, frequency));
+            frequency = neighbor["frequency"].asInt();
+            _graph[artist].AddNeighborPair(pair<Node*, int>(artist2, frequency));
         }
         for (Json::Value song: node["songs"]) {
             name = Json::writeString(builder, song["name"]);
@@ -57,14 +57,14 @@ Graph::Graph(vector<Playlist>& playlists)    {
 }
 
 void Graph::analyze_all_playlists(vector<Playlist>& playlists) {
-    for(Playlist playlist: playlists) {
+    /*for(Playlist playlist: playlists) {
         analyze_playlist(playlist);
-    }
-    /*while (!playlists.empty()) {
+    }*/
+    while (!playlists.empty()) {
         Playlist& playlist = playlists[0];
         analyze_playlist(playlist);
         playlists.erase(playlists.begin());
-    }*/
+    }
 }
 
 // Adds a playlist to a graph 
@@ -97,7 +97,7 @@ Node* Graph::GetNode(string artist) {
     return &_graph[artist];
 }
 
-unordered_map<Node*, double>& Graph::FindNeighbors(string artist) {
+unordered_map<Node*, int>& Graph::FindNeighbors(string artist) {
     return _graph[artist].GetNeighbors();
 }
 
@@ -108,8 +108,8 @@ void Graph::save_graph(string file) {
     saved_graph << "{";
     saved_graph << "\"nodes\": [";
 
-    unordered_map<Node*, double> neighbors;
-    unordered_map<Node*, double>::iterator it_neighbors;
+    unordered_map<Node*, int> neighbors;
+    unordered_map<Node*, int>::iterator it_neighbors;
     unordered_map<string, Node>::iterator it;
     int neighbor_counter;
     int song_counter;

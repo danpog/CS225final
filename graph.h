@@ -17,7 +17,7 @@ class Graph {
         void analyze_all_playlists(vector<Playlist>& playlists);
         void analyze_playlist(Playlist& playlist);
         Node* GetNode(string artist);
-        unordered_map<Node*, double>& FindNeighbors(string artist);
+        unordered_map<Node*, int>& FindNeighbors(string artist);
         unordered_map<string, Node> getGraph() { return _graph; };
         void save_graph(string file);
     private:

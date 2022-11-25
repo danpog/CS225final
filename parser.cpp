@@ -56,6 +56,7 @@ vector<Playlist> parse(string filename)    {
 }
 
 int main()  {
+   /* cout << "Generating Graph:" << endl;
     chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
@@ -63,7 +64,7 @@ int main()  {
     vector<Playlist> a;
 
     // Creating the graph
-    for (int i = 0; i < 10000; i += 1000) {
+    for (int i = 0; i < 15000; i += 1000) {
         a = parse("../spotify_million_playlist_dataset/data/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
         graph.analyze_all_playlists(a);
     }
@@ -72,7 +73,7 @@ int main()  {
     chrono::system_clock::now().time_since_epoch()
     );
     double t = ((t_final-t_start)/1000.0).count();
-
+    cout << "Trimming Neighbors:" << endl;
     for (auto x: graph.getGraph()) {
         graph.GetNode(x.first)->TrimNeighbors(20, false);
     }
@@ -82,10 +83,7 @@ int main()  {
     );
     double t2 = ((t_final_2-t_final)/1000.0).count();
 
-
-    /*for (Song& b : a[0].GetSongs()) {
-        cout << std::hash<Song&>{}(b) << endl;
-    }*/
+    cout << "Saving Graph:" << endl;
     chrono::milliseconds t_start2 = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
@@ -93,47 +91,21 @@ int main()  {
     chrono::milliseconds t_final3 = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
-    double t3 = ((t_final3-t_start2)/1000.0).count();
+    double t3 = ((t_final3-t_start2)/1000.0).count();*/
+    cout << "Generating New Graph:" << endl;
     chrono::milliseconds t_start3 = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
-    Graph graph2 = Graph("saved_graph.json");
+    Graph graph2 = Graph("500k_playlists_graph.json");
     chrono::milliseconds t_final4 = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
     double t4 = ((t_final4-t_start3)/1000.0).count();
-    cout << endl << "Graph generated in "<< t << "s" << endl;
-    cout << endl << "Neighbor trimmed in "<< t2 << "s" << endl;
-    cout << endl << "Graph saved in "<< t3 << "s" << endl;
-    cout << endl << "New graph generated in "<< t4 << "s" << endl;
-    vector<string> artists;
-    artists.push_back("\"Lost Frequencies\"");
-    artists.push_back("\"Michael Jackson\"");
-    artists.push_back("\"Kygo\"");
-    for (string artist1 : artists) {
-        std::cout << artist1 << std::endl;
-        unordered_map<Node*, double> neighbors = graph.FindNeighbors(artist1);
-        unordered_map<Node*, double> neighbors2 = graph2.FindNeighbors(artist1);
-        unordered_map<Node*, double>::iterator it;
-        Node* n = graph.GetNode(artist1);
-        for (int i = 0; i < n->SongCount(); i++)    {
-            cout << n->RequestSong()._name << endl;
-        }
-        cout << endl << endl;
-        Node* n2 = graph2.GetNode(artist1);
-        for (int i = 0; i < n2->SongCount(); i++)    {
-            cout << n2->RequestSong()._name << endl;
-        }
-        cout << endl << endl;
-        for (it = neighbors.begin(); it != neighbors.end(); it++) {
-            cout << it->first->GetArtist() << " " << it->second << endl;
-        }
-        cout << endl << endl;
-        for (it = neighbors2.begin(); it != neighbors2.end(); it++) {
-            cout << it->first->GetArtist() << " " << it->second << endl;
-        }
-        cout << endl << endl;
-    }
+    //cout << endl << "Graph generated in "<< t << "s" << endl;
+    //cout << "Neighbor trimmed in "<< t2 << "s" << endl;
+    //cout << "Graph saved in "<< t3 << "s" << endl;
+    cout << "New graph generated in "<< t4 << "s" << endl;
+
     return 0;
 }
 
