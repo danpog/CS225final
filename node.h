@@ -14,6 +14,7 @@ class Node  {
         Node(string artist, vector<pair<Song,int>>& songs);
         string GetArtist() const {return _artist;};
         Song& RequestSong();
+        Song FindSong(string title);
         void AddSong(Song& song);
         int SongCount() const {return _popular_songs.size();};
         unordered_map<Node*, double>& GetNeighbors() {return _neighbors;};
