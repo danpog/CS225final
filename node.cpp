@@ -24,6 +24,19 @@ Song& Node::RequestSong()   {
     return to_return;
 }
 
+Song Node::FindSong(string title)  {
+    for (size_t j = 0; j < _popular_songs.size(); j++)    {
+        pair<Song, int> i = _popular_songs[j];
+        if (i.first._name == title) {
+            return i.first;
+        }
+    }
+    if (!_popular_songs.empty())    {
+         return _popular_songs[0].first;
+    }
+    throw invalid_argument("Song not found and no songs to return!");
+}
+
 // Add song to node, updates ranking of popular songs
 void Node::AddSong(Song& song)    {
     //Song s = Song(song.GetName(), song.GetAlbum(), song.GetArtist());
