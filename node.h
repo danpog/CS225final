@@ -15,6 +15,7 @@ class Node  {
         string GetArtist() const {return _artist;};
         Song& RequestSong();
         vector<pair<Song,int>> GetAllSongs();
+        Song FindSong(string title);
         void AddSong(Song& song);
         void AddSongPair(Song& song, int frequency);
         int SongCount() const {return _popular_songs.size();};

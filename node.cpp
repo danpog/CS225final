@@ -27,6 +27,18 @@ Song& Node::RequestSong()   {
 vector<pair<Song,int>> Node::GetAllSongs() {
     return _popular_songs;
 }
+Song Node::FindSong(string title)  {
+    for (size_t j = 0; j < _popular_songs.size(); j++)    {
+        pair<Song, int> i = _popular_songs[j];
+        if (i.first._name == title) {
+            return i.first;
+        }
+    }
+    if (!_popular_songs.empty())    {
+         return _popular_songs[0].first;
+    }
+    throw invalid_argument("Song not found and no songs to return!");
+}
 
 // Add song to node, updates ranking of popular songs
 void Node::AddSong(Song& song)    {
@@ -60,6 +72,7 @@ void Node::AddNeighborPair(pair<Node*, int> neighbor) {
 
 void Node::TrimNeighbors(size_t size, bool brute) {
     unordered_map<Node*, int> _new_neighbors;
+
     if (_neighbors.size() <= size) { return; }
     // Brute force taking top 20    
     if (brute) {       
