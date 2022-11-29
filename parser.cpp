@@ -15,6 +15,155 @@
 
 using namespace std;
 
+void split_file(string file) {
+    Json::Value all_nodes_json;
+    std::ifstream graph_file(file);
+    graph_file >> all_nodes_json;
+    Json::StreamWriterBuilder builder;
+
+
+    ofstream saved_graph;
+
+
+    string artist;
+    int frequency;
+    string artist2;
+    string name;
+    string album;
+    string artist3;
+    string uri;
+    int frequency2;
+    int neighbor_counter;
+    int song_counter;
+    int node_counter = 0;
+    saved_graph.open("test_nodes/500k_nodes_" + to_string(node_counter) + "-" + to_string(node_counter + 29999) + ".json");
+    saved_graph << "{";
+    saved_graph << "\"nodes\": [";
+    for (Json::Value node: all_nodes_json["nodes"]) {
+        artist = Json::writeString(builder, node["artist"]);
+        saved_graph << "{";
+        saved_graph << "\"artist\": " << artist << ",";
+        saved_graph << "\"neighbors\": [";
+        neighbor_counter = 1;
+        for (Json::Value neighbor: node["neighbors"]) {
+            artist2 = Json::writeString(builder, neighbor["artist"]);
+            frequency = neighbor["frequency"].asInt();
+            saved_graph << "{";
+            saved_graph << "\"artist\": " << artist2 << ", ";
+            saved_graph << "\"frequency\": " << frequency << "}";
+            if (neighbor_counter < int(node["neighbors"].size())) {
+                saved_graph << ",";
+            }
+            neighbor_counter++;
+        }
+        saved_graph << "],";
+        saved_graph << "\"songs\": [";
+        song_counter = 1;
+        for (Json::Value song: node["songs"]) {
+            name = Json::writeString(builder, song["name"]);
+            album = Json::writeString(builder, song["album"]);
+            artist3 = Json::writeString(builder, song["artist"]);
+            uri = Json::writeString(builder, song["uri"]);
+            frequency2 = song["frequency"].asInt();
+            saved_graph << "{";
+            saved_graph << "\"name\": " << name << ", ";
+            saved_graph << "\"album\": " << album << ", ";
+            saved_graph << "\"artist\": " << artist3 << ", ";
+            saved_graph << "\"uri\": " << uri << ", ";
+            saved_graph << "\"frequency\": " << frequency2 << "}";
+            if (song_counter < int(node["songs"].size())) {
+                saved_graph << ",";
+            }
+            song_counter++;
+        }
+        saved_graph << "]";
+        saved_graph << "},";
+        node_counter++;
+        if (node_counter % 30000 == 0) {
+            saved_graph << "{}";
+            saved_graph << "]";
+            saved_graph << "}";
+            saved_graph.close();
+            saved_graph.open("test_nodes/500k_nodes_" + to_string(node_counter) + "-" + to_string(node_counter + 29999) + ".json");
+            saved_graph << "{";
+            saved_graph << "\"nodes\": [";
+        }
+    }
+    saved_graph << "{}";
+    saved_graph << "]";
+    saved_graph << "}";
+    saved_graph.close();
+}
+
+void combine_files(vector<string> files) {
+    Json::Value all_nodes_json;
+    Json::StreamWriterBuilder builder;
+    ofstream saved_graph;
+    string artist;
+    string artist2;
+    int frequency;
+    string name;
+    string album;
+    string artist3;
+    string uri;
+    int frequency2;
+    int neighbor_counter;
+    int song_counter;
+    saved_graph.open("500k_graph.json");
+    saved_graph << "{";
+    saved_graph << "\"nodes\": [";
+    for (string file: files) {
+        std::ifstream graph_file(file);
+        graph_file >> all_nodes_json;
+
+        for (Json::Value node: all_nodes_json["nodes"]) {
+            artist = Json::writeString(builder, node["artist"]);
+            saved_graph << "{";
+            saved_graph << "\"artist\": " << artist << ",";
+            saved_graph << "\"neighbors\": [";
+            neighbor_counter = 1;
+            for (Json::Value neighbor: node["neighbors"]) {
+                artist2 = Json::writeString(builder, neighbor["artist"]);
+                frequency = neighbor["frequency"].asInt();
+                saved_graph << "{";
+                saved_graph << "\"artist\": " << artist2 << ", ";
+                saved_graph << "\"frequency\": " << frequency << "}";
+                if (neighbor_counter < int(node["neighbors"].size())) {
+                    saved_graph << ",";
+                }
+                neighbor_counter++;
+            }
+            saved_graph << "],";
+            saved_graph << "\"songs\": [";
+            song_counter = 1;
+            for (Json::Value song: node["songs"]) {
+                name = Json::writeString(builder, song["name"]);
+                album = Json::writeString(builder, song["album"]);
+                artist3 = Json::writeString(builder, song["artist"]);
+                uri = Json::writeString(builder, song["uri"]);
+                frequency2 = song["frequency"].asInt();
+                saved_graph << "{";
+                saved_graph << "\"name\": " << name << ", ";
+                saved_graph << "\"album\": " << album << ", ";
+                saved_graph << "\"artist\": " << artist3 << ", ";
+                saved_graph << "\"uri\": " << uri << ", ";
+                saved_graph << "\"frequency\": " << frequency2 << "}";
+                if (song_counter < int(node["songs"].size())) {
+                    saved_graph << ",";
+                }
+                song_counter++;
+            }
+            saved_graph << "]";
+            saved_graph << "},";
+        }
+    }
+    saved_graph << "{}";
+    saved_graph << "]";
+    saved_graph << "}";
+    saved_graph.close();
+
+}
+
 void PrintSong(Song& s) {
     std::cout << s._name << endl << s._album << endl << s._artist << endl << endl;
 }
@@ -59,7 +208,7 @@ bool NeighborsContain(Node* node, Node* target, double count)   {
 }
 
 int main()  {
-    chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
+    /*chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
     Graph graph = Graph();
@@ -67,7 +216,7 @@ int main()  {
 
     // Creating the graph
     a = parse("./old_testing/SongsLimit.json");
-    graph.analyze_all_playlists(a);
+    graph.analyze_all_playlists(a);*/
     /*for (int i = 0; i < 12000; i += 1000) {
         
         a = parse("../spotify_million_playlist_dataset/data/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
@@ -75,7 +224,7 @@ int main()  {
         graph.analyze_all_playlists(a);
     }*/
     
-    chrono::milliseconds t_final = chrono::duration_cast< chrono::milliseconds >(
+    /*chrono::milliseconds t_final = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
     double t = ((t_final-t_start)/1000.0).count();
@@ -87,7 +236,7 @@ int main()  {
     chrono::milliseconds t_final_2 = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
-    double t2 = ((t_final_2-t_final)/1000.0).count();
+    double t2 = ((t_final_2-t_final)/1000.0).count();*/
 
 //EDAN'S TESTING
     /*cout << "Saving Graph:" << endl;
@@ -114,7 +263,7 @@ int main()  {
     cout << "New graph generated in "<< t4 << "s" << endl;*/
 
 //ELI'S TESTING
-    vector<string> artists;
+    //vector<string> artists;
     //artists.push_back("\"Count Basie\"");
     /*artists.push_back("\"Crosby, Stills, Nash & Young\"");
     artists.push_back("\"Pink Floyd\"");
@@ -137,26 +286,26 @@ int main()  {
     
     //graph.SendPlaylistToSpotify(p, "BQB_n6hwB9YZKll7kZFAUjgT2VOS_wdXgOY2NeWhX2lGEJZgQWzRpBqnaXHAeuC5FeRgbA4pJEGEApK53nDU4GwciMqbZVJBl1U3T7irW6Jdu49WOqx7SzwjDAATPGNybPWpfSPNY3EG2ZtscbMa1k-Nb1zqJAZHwHlRQsTx_GsoNXm7B2tNDKAinIL1euSUoo3oM5_jHrEyHWXfUDEIFmTmD-MGjoBlZxo"
     //, "7J2dhcHVao5mJronBUmHIy");
-    for (string artist1 : artists) {
+    /*for (string artist1 : artists) {
         std::cout << artist1 << std::endl;
         unordered_map<Node*, int> neighbors = graph.FindNeighbors(artist1);
         unordered_map<Node*, int>::iterator it;
         Node* n = graph.GetNode(artist1);
-        std::cout << n -> SongCount() << endl;
+        std::cout << n -> SongCount() << endl;*/
         /*for (int i = 0; i < n->SongCount(); i++)    {
             cout << "song: " << endl;
             cout << n->RequestSong()._name << endl;
         }*/
-        for (it = neighbors.begin(); it != neighbors.end(); it++) {
+        //for (it = neighbors.begin(); it != neighbors.end(); it++) {
             //if (it->second > 20) {
-                std::cout << it->first->GetArtist() << " " << it->second << endl;
+                //std::cout << it->first->GetArtist() << " " << it->second << endl;
             //}
-        } //
-    }
+        //} //
+    //}
     /*for (Song& b : a[0].GetSongs()) {
         cout << std::hash<Song&>{}(b) << endl;
     }*/
-    vector<Song> song_prefs;
+    /*vector<Song> song_prefs;
     std::cout << endl << "Graph generated in "<< t << "s" << endl;
     std::cout << endl << "Neighbor trimmed in "<< t2 << "s" << endl;
     Node* source = graph.GetNode("\"Missy Elliott\"");
@@ -181,7 +330,15 @@ int main()  {
     cout << p.ContainsSongByName("\"Yo (Excuse Me Miss)\"") << endl;
     cout << p.ContainsSongByName("\"Say My Name\"") << endl;
     cout << p.ContainsSongByName("\"Somebody To Love\"") << endl;
-    cout << p;
+    cout << p;*/
+
+    
+    vector<string> files;
+    for (int i = 0; i < 8; i++) {
+        files.push_back("graph_nodes/500k_nodes_" + to_string(i * 30000) + "-" + to_string((i+1) * 30000 - 1) + ".json");
+    }
+    combine_files(files);
+
     return 0;
 }
 
