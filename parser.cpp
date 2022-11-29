@@ -16,7 +16,7 @@
 using namespace std;
 
 void PrintSong(Song& s) {
-    cout << s._name << endl << s._album << endl << s._artist << endl << endl;
+    std::cout << s._name << endl << s._album << endl << s._artist << endl << endl;
 }
 
 vector<Playlist> parse(string filename)    {
@@ -31,7 +31,7 @@ vector<Playlist> parse(string filename)    {
     playlist_file >> all_playlists_json;
 
     // cout << all_playlists_json; // This will print the entire json object.
-    cout << all_playlists_json["info"]; 
+    std::cout << all_playlists_json["info"]; 
     Json::StreamWriterBuilder builder;
     // builder["indentation"] = ""; // If you want whitespace-less output
 
@@ -54,42 +54,11 @@ vector<Playlist> parse(string filename)    {
 
     return all_playlists;
 }
+bool NeighborsContain(Node* node, Node* target, double count)   {
+    return node->GetNeighbors()[target] == count;
+}
 
 int main()  {
-   /* cout << "Generating Graph:" << endl;
-    string s;
-    string command;
-    fstream file("../copy");
-    string s2;
-    while (getline(file, s2))    {
-        command += s2;
-    }
-    char char_array[command.length() + 1];
-    strcpy(char_array, command.c_str());
-    char* temp = char_array;
-    system(temp);
-    //
-    /*do 
-    {
-    getline(cin, s);
-    
-    cout << s << endl;
-    } while (getchar() == 'f');*/
-
-    //cout << "done" << endl;
-    //return 0;
-    /*string s;
-    string s2;
-    fstream file("../command_test");
-    while (getline(file, s2))    {
-        s += s2;
-    }
-    char char_array[s.length() + 1];
-    strcpy(char_array, s.c_str());
-    char* temp = char_array;
-    system(temp);
-    return 0;*/
-
     chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
@@ -97,21 +66,22 @@ int main()  {
     vector<Playlist> a;
 
     // Creating the graph
-
-    for (int i = 0; i < 12000; i += 1000) {
+    a = parse("./old_testing/SongsLimit.json");
+    graph.analyze_all_playlists(a);
+    /*for (int i = 0; i < 12000; i += 1000) {
         
         a = parse("../spotify_million_playlist_dataset/data/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
         //a = parse("mpdslices/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
         graph.analyze_all_playlists(a);
-    }
+    }*/
     
     chrono::milliseconds t_final = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
     double t = ((t_final-t_start)/1000.0).count();
-    cout << "Trimming Neighbors:" << endl;
+    std::cout << "Trimming Neighbors:" << endl;
     for (auto x: graph.getGraph()) {
-        graph.GetNode(x.first)->TrimNeighbors(5, true);
+        graph.GetNode(x.first)->TrimNeighbors(3, true);
     }
 
     chrono::milliseconds t_final_2 = chrono::duration_cast< chrono::milliseconds >(
@@ -120,7 +90,7 @@ int main()  {
     double t2 = ((t_final_2-t_final)/1000.0).count();
 
 //EDAN'S TESTING
-    cout << "Saving Graph:" << endl;
+    /*cout << "Saving Graph:" << endl;
     chrono::milliseconds t_start2 = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
@@ -128,7 +98,7 @@ int main()  {
     chrono::milliseconds t_final3 = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
-    double t3 = ((t_final3-t_start2)/1000.0).count();*/
+    double t3 = ((t_final3-t_start2)/1000.0).count();
     cout << "Generating New Graph:" << endl;
     chrono::milliseconds t_start3 = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
@@ -141,54 +111,77 @@ int main()  {
     //cout << endl << "Graph generated in "<< t << "s" << endl;
     //cout << "Neighbor trimmed in "<< t2 << "s" << endl;
     //cout << "Graph saved in "<< t3 << "s" << endl;
-    cout << "New graph generated in "<< t4 << "s" << endl;
+    cout << "New graph generated in "<< t4 << "s" << endl;*/
 
 //ELI'S TESTING
     vector<string> artists;
     //artists.push_back("\"Count Basie\"");
-    artists.push_back("\"Crosby, Stills, Nash & Young\"");
+    /*artists.push_back("\"Crosby, Stills, Nash & Young\"");
     artists.push_back("\"Pink Floyd\"");
     artists.push_back("\"Dire Straits\"");
     artists.push_back("\"Peter Gabriel\"");
-    artists.push_back("\"Jimi Hendrix\"");
+    artists.push_back("\"Jimi Hendrix\"");*/
 
-    vector<Song> song_prefs;
+    /*vector<Song> song_prefs;
     song_prefs.push_back(graph.GetNode("\"Crosby, Stills, Nash & Young\"") -> FindSong("\"Almost Cut My Hair\""));
     song_prefs.push_back(graph.GetNode("\"Pink Floyd\"") -> FindSong("\"Wish You Were Here\""));
     song_prefs.push_back(graph.GetNode("\"Dire Straits\"") -> FindSong("\"Walk Of Life\""));
     song_prefs.push_back(graph.GetNode("\"Peter Gabriel\"") -> FindSong("\"Solsbury Hill - 2002 Remaster\""));
-    song_prefs.push_back(graph.GetNode("\"Jimi Hendrix\"") -> FindSong("\"Voodoo Child (Slight Return)\""));
+    song_prefs.push_back(graph.GetNode("\"Jimi Hendrix\"") -> FindSong("\"Voodoo Child (Slight Return)\""));*/
     //Almost Cut My Hair Song by Crosby, Stills, Nash & Young
     //pink flloyd
     //dire straits
     //peter gabriel
     //jimmy hendricks
 
-    Playlist p = graph.CreatePlaylist(100, song_prefs);
-    graph.SendPlaylistToSpotify(p, "BQB_n6hwB9YZKll7kZFAUjgT2VOS_wdXgOY2NeWhX2lGEJZgQWzRpBqnaXHAeuC5FeRgbA4pJEGEApK53nDU4GwciMqbZVJBl1U3T7irW6Jdu49WOqx7SzwjDAATPGNybPWpfSPNY3EG2ZtscbMa1k-Nb1zqJAZHwHlRQsTx_GsoNXm7B2tNDKAinIL1euSUoo3oM5_jHrEyHWXfUDEIFmTmD-MGjoBlZxo"
-    , "7J2dhcHVao5mJronBUmHIy");
-    cout << p << endl;
+    
+    //graph.SendPlaylistToSpotify(p, "BQB_n6hwB9YZKll7kZFAUjgT2VOS_wdXgOY2NeWhX2lGEJZgQWzRpBqnaXHAeuC5FeRgbA4pJEGEApK53nDU4GwciMqbZVJBl1U3T7irW6Jdu49WOqx7SzwjDAATPGNybPWpfSPNY3EG2ZtscbMa1k-Nb1zqJAZHwHlRQsTx_GsoNXm7B2tNDKAinIL1euSUoo3oM5_jHrEyHWXfUDEIFmTmD-MGjoBlZxo"
+    //, "7J2dhcHVao5mJronBUmHIy");
     for (string artist1 : artists) {
         std::cout << artist1 << std::endl;
-        unordered_map<Node*, double> neighbors = graph.FindNeighbors(artist1);
-        unordered_map<Node*, double>::iterator it;
+        unordered_map<Node*, int> neighbors = graph.FindNeighbors(artist1);
+        unordered_map<Node*, int>::iterator it;
         Node* n = graph.GetNode(artist1);
-        cout << n -> SongCount() << endl;
+        std::cout << n -> SongCount() << endl;
         /*for (int i = 0; i < n->SongCount(); i++)    {
             cout << "song: " << endl;
             cout << n->RequestSong()._name << endl;
         }*/
         for (it = neighbors.begin(); it != neighbors.end(); it++) {
             //if (it->second > 20) {
-                cout << it->first->GetArtist() << " " << it->second << endl;
+                std::cout << it->first->GetArtist() << " " << it->second << endl;
             //}
         } //
     }
     /*for (Song& b : a[0].GetSongs()) {
         cout << std::hash<Song&>{}(b) << endl;
     }*/
-    cout << endl << "Graph generated in "<< t << "s" << endl;
-    cout << endl << "Neighbor trimmed in "<< t2 << "s" << endl;
+    vector<Song> song_prefs;
+    std::cout << endl << "Graph generated in "<< t << "s" << endl;
+    std::cout << endl << "Neighbor trimmed in "<< t2 << "s" << endl;
+    Node* source = graph.GetNode("\"Missy Elliott\"");
+    Node* top = graph.GetNode("\"Jesse McCartney\"");
+    Node* second = graph.GetNode("\"Chris Brown\"");
+    Node* third = graph.GetNode("\"Justin Bieber\"");
+    Node* bieber3 = graph.GetNode("\"Destiny's Child\"");
+    cout << NeighborsContain(source, top, 4) << endl;
+    cout << NeighborsContain(source, second, 3) << endl;
+    cout << NeighborsContain(source, third, 3) << endl;
+    cout << NeighborsContain(third, top, 12) << endl;
+    cout << NeighborsContain(third, second, 9) << endl;
+    cout << NeighborsContain(third, bieber3, 6) << endl;
+    song_prefs.push_back(graph.GetNode("\"Missy Elliott\"") -> FindSong("\"Lose Control (feat. Ciara & Fat Man Scoop)\""));
+    Playlist p = graph.CreatePlaylist(9, song_prefs);
+    //1, 3-5
+    cout << p.ContainsSongByName("\"Lose Control (feat. Ciara & Fat Man Scoop)\"") << endl;
+    cout << p.ContainsSongByName("\"One Less Lonely Girl\"") << endl;
+    cout << p.ContainsSongByName("\"Right Where You Want Me - Radio Edit Version\"") << endl;
+    cout << p.ContainsSongByName("\"Run It!\"") << endl;
+    //7-9
+    cout << p.ContainsSongByName("\"Yo (Excuse Me Miss)\"") << endl;
+    cout << p.ContainsSongByName("\"Say My Name\"") << endl;
+    cout << p.ContainsSongByName("\"Somebody To Love\"") << endl;
+    cout << p;
     return 0;
 }
 

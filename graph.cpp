@@ -189,9 +189,9 @@ bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& pla
     }
     playlist.push_back(source -> RequestSong());
     visited[source -> GetArtist()] = true;
-    unordered_map<Node*, double>& neighbors =  source -> GetNeighbors();
+    unordered_map<Node*, int>& neighbors =  source -> GetNeighbors();
 
-    unordered_map<Node*, double>::iterator it;
+    unordered_map<Node*, int>::iterator it;
     for (it = neighbors.begin(); it != neighbors.end(); it++)  {
         if (visited[it -> first -> GetArtist()])   {
             continue;

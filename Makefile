@@ -8,7 +8,7 @@ tests: bin/tests
 bin/exec: $(FILES)
 	$(CXX) $(CXX_FLAGS) $^ -o $@
 
-bin/tests: ./tests/tests.cpp ./song.cpp 
+bin/tests: ./tests/tests.cpp
 	$(CXX) $(CXX_FLAGS) $^ -o $@
 
 .DEFAULT_GOAL := exec

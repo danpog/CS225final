@@ -24,6 +24,15 @@ Song& Playlist::GetSong(int i) {
     return _songs[i];
 }
 
+bool Playlist::ContainsSongByName(string name) {
+    for (Song& i : _songs)  {
+        if (i._name == name)    {
+            return true;
+        }
+    }
+    return false;
+}
+
 ostream& operator<<(ostream &out, const Playlist &p)
 {
     out << "Name of Playlist: " << p._name << endl;

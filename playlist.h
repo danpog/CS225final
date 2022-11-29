@@ -14,6 +14,7 @@ class Playlist  {
         int SongCount() const;
         int GetID() const;
         void SetID(int id);
+        bool ContainsSongByName(string name);
         friend ostream & operator <<(ostream &out, const Playlist& p);
     private:
         string _name;
