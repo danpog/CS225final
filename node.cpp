@@ -24,6 +24,9 @@ Song& Node::RequestSong()   {
     return to_return;
 }
 
+vector<pair<Song,int>> Node::GetAllSongs() {
+    return _popular_songs;
+}
 Song Node::FindSong(string title)  {
     for (size_t j = 0; j < _popular_songs.size(); j++)    {
         pair<Song, int> i = _popular_songs[j];
@@ -53,18 +56,29 @@ void Node::AddSong(Song& song)    {
     }
     _popular_songs.push_back(pair<Song&, int>(song, 1));
 }
+
+void Node::AddSongPair(Song& song, int frequency) {
+    _popular_songs.push_back(pair<Song&, int>(song, frequency));
+}
+
 void Node::AddNeighbor(Node* node)   {
-    _neighbors.insert(std::pair<Node*, double>(node, 0)).first -> second++;
-    node->GetNeighbors().insert(std::pair<Node*, double>(this, 0)).first -> second++;
-} //
+    _neighbors.insert(std::pair<Node*, int>(node, 0)).first -> second++;
+    node->GetNeighbors().insert(std::pair<Node*, int>(this, 0)).first -> second++;
+}
+
+void Node::AddNeighborPair(pair<Node*, int> neighbor) {
+    _neighbors.insert(std::pair<Node*, int>(neighbor.first, neighbor.second));
+}
 
 void Node::TrimNeighbors(size_t size, bool brute) {
-    unordered_map<Node*, double> _new_neighbors;
+    unordered_map<Node*, int> _new_neighbors;
+
     if (_neighbors.size() <= size) { return; }
     // Brute force taking top 20    
     if (brute) {       
+        pair<Node*, int> max;
         for (size_t i = 0; i < size; ++i) {
-            pair<Node*, double> max = pair<Node*, double>(nullptr, 0.0);
+            max = pair<Node*, int>(nullptr, 0.0);
             for (auto const& x : _neighbors) {
                 if (x.second > max.second) {
                     max = x;
@@ -77,9 +91,9 @@ void Node::TrimNeighbors(size_t size, bool brute) {
         _neighbors = _new_neighbors;
     } else {
         // Creating a max heap for second element of pair
-        auto cmp = [](const pair<Node*, double>& lhs, const pair<Node*, double>& rhs)
+        auto cmp = [](const pair<Node*, int>& lhs, const pair<Node*, int>& rhs)
         { return lhs.second < rhs.second;};
-        priority_queue<pair<Node*, double>, vector<pair<Node*, double>>, decltype(cmp) > pQ(cmp);
+        priority_queue<pair<Node*, int>, vector<pair<Node*, int>>, decltype(cmp) > pQ(cmp);
         for(auto const& x : _neighbors) {
             pQ.push(x);
         }
@@ -95,8 +109,8 @@ void Node::TrimNeighbors(size_t size, bool brute) {
     }
 }
 
-double Node::GetWeight(Node* node)  {
-    unordered_map<Node*, double>::iterator it;
+int Node::GetWeight(Node* node)  {
+    unordered_map<Node*, int>::iterator it;
     if (_neighbors.count(node) == 0)    {
         return 0;
     }
@@ -108,8 +122,8 @@ double Node::GetWeight(Node* node)  {
     }
     return 0;*/
 }
-double Node::GetWeight(string artist)   {
-    unordered_map<Node*, double>::iterator it;
+int Node::GetWeight(string artist)   {
+    unordered_map<Node*, int>::iterator it;
     for (it = _neighbors.begin(); it != _neighbors.end(); it++) {
         if (it->first -> GetArtist() == artist) {
             return it->second;

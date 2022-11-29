@@ -56,6 +56,7 @@ vector<Playlist> parse(string filename)    {
 }
 
 int main()  {
+   /* cout << "Generating Graph:" << endl;
     string s;
     string command;
     fstream file("../copy");
@@ -75,8 +76,8 @@ int main()  {
     cout << s << endl;
     } while (getchar() == 'f');*/
 
-    cout << "done" << endl;
-    return 0;
+    //cout << "done" << endl;
+    //return 0;
     /*string s;
     string s2;
     fstream file("../command_test");
@@ -96,6 +97,7 @@ int main()  {
     vector<Playlist> a;
 
     // Creating the graph
+
     for (int i = 0; i < 12000; i += 1000) {
         
         a = parse("../spotify_million_playlist_dataset/data/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
@@ -107,7 +109,7 @@ int main()  {
     chrono::system_clock::now().time_since_epoch()
     );
     double t = ((t_final-t_start)/1000.0).count();
-
+    cout << "Trimming Neighbors:" << endl;
     for (auto x: graph.getGraph()) {
         graph.GetNode(x.first)->TrimNeighbors(5, true);
     }
@@ -117,6 +119,31 @@ int main()  {
     );
     double t2 = ((t_final_2-t_final)/1000.0).count();
 
+//EDAN'S TESTING
+    cout << "Saving Graph:" << endl;
+    chrono::milliseconds t_start2 = chrono::duration_cast< chrono::milliseconds >(
+    chrono::system_clock::now().time_since_epoch()
+    );
+    graph.save_graph("saved_graph.json");
+    chrono::milliseconds t_final3 = chrono::duration_cast< chrono::milliseconds >(
+    chrono::system_clock::now().time_since_epoch()
+    );
+    double t3 = ((t_final3-t_start2)/1000.0).count();*/
+    cout << "Generating New Graph:" << endl;
+    chrono::milliseconds t_start3 = chrono::duration_cast< chrono::milliseconds >(
+    chrono::system_clock::now().time_since_epoch()
+    );
+    Graph graph2 = Graph("500k_playlists_graph.json");
+    chrono::milliseconds t_final4 = chrono::duration_cast< chrono::milliseconds >(
+    chrono::system_clock::now().time_since_epoch()
+    );
+    double t4 = ((t_final4-t_start3)/1000.0).count();
+    //cout << endl << "Graph generated in "<< t << "s" << endl;
+    //cout << "Neighbor trimmed in "<< t2 << "s" << endl;
+    //cout << "Graph saved in "<< t3 << "s" << endl;
+    cout << "New graph generated in "<< t4 << "s" << endl;
+
+//ELI'S TESTING
     vector<string> artists;
     //artists.push_back("\"Count Basie\"");
     artists.push_back("\"Crosby, Stills, Nash & Young\"");

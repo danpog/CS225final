@@ -14,14 +14,17 @@ class Node  {
         Node(string artist, vector<pair<Song,int>>& songs);
         string GetArtist() const {return _artist;};
         Song& RequestSong();
+        vector<pair<Song,int>> GetAllSongs();
         Song FindSong(string title);
         void AddSong(Song& song);
+        void AddSongPair(Song& song, int frequency);
         int SongCount() const {return _popular_songs.size();};
-        unordered_map<Node*, double>& GetNeighbors() {return _neighbors;};
+        unordered_map<Node*, int>& GetNeighbors() {return _neighbors;};
         void AddNeighbor(Node* node);
+        void AddNeighborPair(pair<Node*, int> neighbor);
         void TrimNeighbors(size_t size, bool brute);
-        double GetWeight(Node* node);
-        double GetWeight(string artist);
+        int GetWeight(Node* node);
+        int GetWeight(string artist);
         friend bool operator<(Node& LHS, Node& RHS);
         friend bool operator==(Node& LHS, Node& RHS);
         friend bool operator!=(Node& LHS, Node& RHS);
@@ -31,5 +34,5 @@ class Node  {
         string _artist;
         vector<pair<Song,int>> _popular_songs;
         size_t _position = 0;
-        unordered_map<Node*, double> _neighbors;
+        unordered_map<Node*, int> _neighbors;
 };
