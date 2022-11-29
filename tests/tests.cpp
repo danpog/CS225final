@@ -169,7 +169,6 @@ TEST_CASE("Check playlist larger2") {
     for (auto i : p.GetSongs()) {
         std::cout << i._name << std::endl;
     }    
-
 }
 
 
