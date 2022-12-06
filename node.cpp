@@ -10,18 +10,50 @@ using namespace std;
 
 Node::Node(string artist):  _artist(artist) {}
 Node::Node(string artist, vector<pair<Song , int>>& songs): _artist(artist), _popular_songs(songs)  {}
-Song& Node::RequestSong()   {
+Song& Node::RequestSong(int song_tier)   {
+    song_tier = song_tier*SongCount()/100;
     if (SongCount() == 0)   {
         throw invalid_argument("No songs to give!");
     }
-    if ((int)_position >= SongCount())   {
-        //Can modify this so that we know if we've looped back 
-        //(yes I know I could use % but this just allows for a print statement or something more easily)
-        _position = 0;
+    if (song_tier < .25 * SongCount())   {
+        song_tier = 0;
+    }
+    if (_position == -1)    {
+        _position = song_tier;
+    }
+    if (_position >= SongCount())   {
+        _position = song_tier;
     }
     Song& to_return = _popular_songs[_position].first;
-    ++_position;
+    if (song_tier == 0)   {
+        ++_position;
+    }
+    else {
+        if (_position <= song_tier)  {
+            int diff = song_tier - _position;
+            diff++;
+            if (song_tier + diff < SongCount()) {
+                 _position = song_tier + diff;
+            }
+            else    {
+                _position--;
+            }
+           
+        }
+        else {
+            int diff = _position - song_tier;
+            if (song_tier - diff >= 0)  {
+                _position = song_tier - diff;
+            }
+            else    {
+                _position++;
+            }
+        }
+    }
     return to_return;
+}
+Song& Node::RequestSong()   {
+    return RequestSong(0);
 }
 
 vector<pair<Song,int>> Node::GetAllSongs() {
@@ -35,9 +67,22 @@ Song Node::FindSong(string title)  {
         }
     }
     if (!_popular_songs.empty())    {
-         return _popular_songs[0].first;
+         return _popular_songs[int(SongCount()/.33)].first;
     }
     throw invalid_argument("Song not found and no songs to return!");
+}
+
+int Node::FindSongPlacement(string title)   {
+    for (size_t j = 0; j < _popular_songs.size(); j++)    {
+        pair<Song, int> i = _popular_songs[j];
+        if (i.first._name == title) {
+            return j;
+        }
+    }
+    if (!_popular_songs.empty())    {
+         return int(SongCount()/.33);
+    }
+    throw invalid_argument("Song not found!");
 }
 
 // Add song to node, updates ranking of popular songs

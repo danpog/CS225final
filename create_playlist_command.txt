@@ -1,0 +1,20 @@
+curl -X "POST" 
+"https://api.spotify.com/v1/users/
+31ibgjkibakuowa4cgj5vswmunvu
+/playlists" 
+--data "{\"name\":
+\"
+New Playlist
+\"
+,
+\"description\":
+\"
+New playlist description
+\"
+,
+\"public\":
+false
+}" 
+-H "Accept: application/json" -H "Content-Type: application/json" -H "Authorization: Bearer 
+BQBH_mdMRQRu3dgSXwhMXLJ6r6LvK5W_pgBWaDh-S-JSKuLYMrgDpXHQ3SPrTIPGXZ8KEFTkX9B8rlW7eG0EYVn-onRbG3mh7E0C4yd4B4gVvOejzWLf9q0hikvwaRKxB9iC_jfv0VJfWIujMy8w3BthFWi8h0FpkWcU6hChB_JNhbaeIuBAIH02JhlfCLSgPXmxwr7oOeIyFWFCMrL3p6Th-7AGydGgBhis_QwL2PM-2MaLAV8RcFzYSpg0SU6b
+"

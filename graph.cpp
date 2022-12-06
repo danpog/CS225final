@@ -11,6 +11,7 @@
 #include <fstream>
 #include <json/json.h>
 #include <cstring>
+#include <chrono>
 
 using namespace std;
 
@@ -164,6 +165,13 @@ void Graph::save_graph(string file) {
     cout << endl << "artist: " << artist << " neighbor: " << neighbor << " frequency: " << frequency<< endl;*/
 }
 Playlist Graph::CreatePlaylist(int num_songs, vector<Song>& preferences)    {
+    int sum = 0;
+    for (Song& s : preferences) {
+        int temp = 100*GetNode(s._artist) -> FindSongPlacement(s._name);
+        int temp2 = GetNode(s._artist) -> SongCount();
+        sum += temp / temp2;
+    }
+    int average = sum/preferences.size();
     vector<Song> playlist;
     for (int depth = 0; depth < num_songs; depth++) {
         for (Song& s : preferences) {
@@ -172,7 +180,7 @@ Playlist Graph::CreatePlaylist(int num_songs, vector<Song>& preferences)    {
             if (node -> SongCount() == 0) {
                 continue;
             }
-            if (RecurseDFS(node, num_songs, depth, playlist, visited))  {
+            if (RecurseDFS(node, num_songs, depth, playlist, visited, average))  {
                 return Playlist(playlist);
             }
         }
@@ -180,14 +188,14 @@ Playlist Graph::CreatePlaylist(int num_songs, vector<Song>& preferences)    {
     return Playlist(playlist);
 }
 
-bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& playlist, unordered_map<string, bool>& visited)  {
+bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& playlist, unordered_map<string, bool>& visited, int song_tier)  {
     if ((int)playlist.size() >= num_songs)   {
         return true;
     }
     if (depth < 0)  {
         return false;
     }
-    playlist.push_back(source -> RequestSong());
+    playlist.push_back(source -> RequestSong(song_tier));
     visited[source -> GetArtist()] = true;
     unordered_map<Node*, int>& neighbors =  source -> GetNeighbors();
 
@@ -196,7 +204,7 @@ bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& pla
         if (visited[it -> first -> GetArtist()])   {
             continue;
         }
-        if (RecurseDFS(it -> first, num_songs, depth - 1, playlist, visited))   {
+        if (RecurseDFS(it -> first, num_songs, depth - 1, playlist, visited, song_tier))   {
             return true;
         }
     }
@@ -204,53 +212,77 @@ bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& pla
 }
 
 bool Graph::SendPlaylistToSpotify(Playlist& playlist, string uid, string playlist_id) {
-    const int PLAYLIST_ID = 3;
-    const int URI_START = 6; 
-    const int USER_TOKEN = 9;
+    for (int hundredcount = 0; hundredcount < (playlist.SongCount() - 1)/100 + 1; hundredcount++) {
+        std::ifstream myfile ("./terminal_output.txt");
+        chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
+        chrono::system_clock::now().time_since_epoch()
+        );
 
-    string command = "";
-    fstream file("../command_test");
-    string s;
-    for (int i = 0; i < PLAYLIST_ID - 1; i++)   {
-        getline(file, s);
-        command += s;
-    }
-    getline(file,s); //this is just the placeholder playlist id
-    command += playlist_id;
-    for (int i = PLAYLIST_ID; i < URI_START - 1; i++)   {
-        getline(file, s);
-        command += s;
-    }
-    int count = 0;
-    for (Song& song : playlist.GetSongs())  {
-        string uri = song._uri.substr(1, song._uri.size() - 2);
-        if (count == 0) {
-            command += uri;
+
+        chrono::milliseconds t_final = chrono::duration_cast< chrono::milliseconds >(
+        chrono::system_clock::now().time_since_epoch()
+        );
+        if (hundredcount != 0) {
+            while (((t_final-t_start)/1000.0).count() < 2)    {
+                t_final = chrono::duration_cast< chrono::milliseconds >(
+                chrono::system_clock::now().time_since_epoch()
+                );
+            }
+        
         }
-        else    {
-            string uri2 = "%2C" + uri;
-            command += uri2;
+        const int PLAYLIST_ID = 3;
+        const int URI_START = 6; 
+        const int USER_TOKEN = 9;
+
+        string command = "";
+        fstream file("./add_to_playlist_command.txt");
+        string s;
+        for (int i = 0; i < PLAYLIST_ID - 1; i++)   {
+            getline(file, s);
+            command += s;
         }
-        count++;
-    }
-    getline(file, s);
-    for (int i = URI_START; i < USER_TOKEN - 1; i++)    {
+        getline(file,s); //this is just the placeholder playlist id
+        command += playlist_id;
+        for (int i = PLAYLIST_ID; i < URI_START - 1; i++)   {
+            getline(file, s);
+            command += s;
+        }
+        int count = 0;
+        for (int i = 100*hundredcount; i < std::min(playlist.SongCount(), 100*hundredcount + 100); i++)  {
+            Song& song = playlist.GetSong(i);
+            string uri = song._uri.substr(1, song._uri.size() - 2);
+            if (count == 0) {
+                command += uri;
+            }
+            else    {
+                string uri2 = "%2C" + uri;
+                command += uri2;
+            }
+            count++;
+        }
         getline(file, s);
-        command += s;
+        for (int i = URI_START; i < USER_TOKEN - 1; i++)    {
+            getline(file, s);
+            command += s;
+        }
+        getline(file, s); //temp uid
+        command += uid;
+        while (getline(file,s)) {
+            command += s;
+        }
+        command += " > terminal_output.txt";
+        char char_array[command.length() + 1];
+        strcpy(char_array, command.c_str());
+        char* temp = char_array;
+        system(temp);
     }
-    getline(file, s); //temp uid
-    command += uid;
-    while (getline(file,s)) {
-        command += s;
-    }
-    char char_array[command.length() + 1];
-    strcpy(char_array, command.c_str());
-    char* temp = char_array;
-    system(temp);
     return true;
 }
 
-string Graph::CreateNewPlayList(string user_id, string token, string name, string description, bool pub) {
+string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, string description, bool pub) {
+    std::ofstream ofs;
+    ofs.open("terminal_output.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
     const int USER_ID = 3;
     const int PLAYLIST_NAME = 7;
     const int PLAYLIST_DESCRIPTION = 12;
@@ -258,7 +290,7 @@ string Graph::CreateNewPlayList(string user_id, string token, string name, strin
     const int USER_TOKEN = 19;
 
     string command = "";
-    fstream file("../create_playlist");
+    fstream file("./create_playlist_command.txt");
     string s;
 
     for (int i = 0; i < USER_ID - 1; i++)   {
@@ -297,13 +329,43 @@ string Graph::CreateNewPlayList(string user_id, string token, string name, strin
     while (getline(file,s)) {
         command += s;
     }
+    command += " > terminal_output.txt";
     char char_array[command.length() + 1];
     strcpy(char_array, command.c_str());
     char* temp = char_array;
     system(temp);
-    
-    /*while (cin.get() != "{")    {
+    std::ifstream myfile ("./terminal_output.txt");
+    chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
+    chrono::system_clock::now().time_since_epoch()
+    );
 
-    }*/
-    return "f";
+
+    chrono::milliseconds t_final = chrono::duration_cast< chrono::milliseconds >(
+    chrono::system_clock::now().time_since_epoch()
+    );
+    while (((t_final-t_start)/1000.0).count() < 2)    {
+        t_final = chrono::duration_cast< chrono::milliseconds >(
+        chrono::system_clock::now().time_since_epoch()
+        );
+    }
+    while (myfile.get() != '{')    {
+
+    }
+    string line;
+    while (myfile.good())   {
+        std::getline(myfile, line);
+        if (line.size() < 8)    {
+            continue;
+        }
+        if (line.substr(3, 5) == "error")   {
+            return "error";
+        }
+        if (line.substr(2, 26) == "\"uri\" : \"spotify:playlist:")  {
+            line = line.substr(28, line.size() - 29);
+            break;
+        }
+        line = "";
+
+    }
+    return line;
 }
