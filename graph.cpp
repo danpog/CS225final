@@ -7,6 +7,8 @@
 #include <string>
 #include <map>
 #include <unordered_map>
+#include <unordered_set>
+#include <stack>
 #include <iostream>
 #include <fstream>
 #include <json/json.h>
@@ -368,4 +370,73 @@ string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, s
 
     }
     return line;
+}
+
+string Graph::somethingNew(string artist1, int distance) {
+    unordered_set <string> visited;
+    vector<string> visited_ordered;
+    int max_weight;
+    Node* next_node;
+    string cur_artist = artist1;
+    visited.insert(cur_artist);
+    for (int i = 0; i < distance; i++) {
+        visited_ordered.push_back(cur_artist);
+        max_weight = 0;
+        for (auto neighbor: this->FindNeighbors(cur_artist)) {
+            if(neighbor.second > max_weight && visited.find(neighbor.first->GetArtist()) == visited.end()) {
+                max_weight = neighbor.second;
+                next_node = neighbor.first;
+            }
+            visited.insert(neighbor.first->GetArtist());
+        }
+        cur_artist = next_node->GetArtist();
+    }
+    for (string artist: visited_ordered) {
+        cout << artist << endl;
+    }
+    return cur_artist;
+}
+
+bool Graph::similarity(string artist1, string artist2, int distance) {
+    if (distance == 0) {
+        return false;
+    }
+    vector<string> path;
+    path.push_back(artist1);
+    for (auto neighbor: this->FindNeighbors(artist1)) {
+        if (neighbor.first->GetArtist() == artist2) {
+            cout << neighbor.first->GetArtist() << endl;
+            return true;
+        }
+        path.push_back(neighbor.first->GetArtist());
+        if(similarity(neighbor.first->GetArtist(), artist2, distance-1, path)) {
+            cout << neighbor.first->GetArtist() << endl;
+            return true;
+        } else {
+            path.pop_back();
+        }
+    }
+    return false;
+}
+
+bool Graph::similarity(string artist1, string artist2, int distance, vector<string>& path) {
+    if (distance == 0) {
+        return false;
+    }
+    for (auto neighbor: this->FindNeighbors(artist1)) {
+        if (neighbor.first->GetArtist() == artist2) {
+            cout << neighbor.first->GetArtist() << endl;
+            return true;
+        }
+        if(find(path.begin(), path.end(), neighbor.first->GetArtist()) == path.end()) {
+            path.push_back(neighbor.first->GetArtist());
+            if(similarity(neighbor.first->GetArtist(), artist2, distance-1, path)) {
+                cout << neighbor.first->GetArtist() << endl;
+                return true;
+            } else {
+                path.pop_back();
+            }
+        }
+    }
+    return false;
 }
