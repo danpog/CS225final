@@ -21,6 +21,7 @@ class Graph {
         unordered_map<string, Node> getGraph() { return _graph; };
         void save_graph(string file);
         Playlist CreatePlaylist(int num_songs, vector<Song>& preferences);
+        vector<string> Dijkstras(string source, string dest);
         bool SendPlaylistToSpotify(Playlist& playlist, string uid, string playlist_id);
         string CreateSpotifyPlaylist(string user_id, string token, string name, string description, bool pub);
         string somethingNew(string artist1, int distance);

@@ -14,6 +14,7 @@
 #include <json/json.h>
 #include <cstring>
 #include <chrono>
+#include <queue>
 
 using namespace std;
 
@@ -188,6 +189,55 @@ Playlist Graph::CreatePlaylist(int num_songs, vector<Song>& preferences)    {
         }
     }
     return Playlist(playlist);
+}
+vector<string> Graph::Dijkstras(string source, string dest) {
+    map<string, double> dist;
+    map<string, string> prev;
+    set<string> removed;
+    dist[source] = 0;                           // Initialization
+
+    // Min Heap
+    typedef pair<double, string> pi;
+    std::priority_queue<pi, vector<pi>, greater<pi> > pq;
+    
+    for (auto const& vertex : _graph) {
+        if (vertex.first != source) {
+            dist[vertex.first] = INT_MAX;                       // Unknown distance from source to v
+            prev[vertex.first] = "";   
+            pq.push(make_pair(dist[vertex.first], vertex.first));                // Predecessor of v
+        } else {
+            pq.push(make_pair(dist[source], source));
+        }
+    }
+
+    while (!pq.empty())   {                    // The main loop
+        pi u = pq.top();                       // Best Vertex
+        pq.pop();                              // Remove best vertex
+        if (dist[u.second] == INT_MAX) {  return vector<string>();  }
+        for (auto const& neighbor: _graph[u.second].GetNeighbors()) {           // Go through all v neighbors of u
+            auto vertex = neighbor.first -> GetArtist();
+            if (vertex == dest) {
+                string temp = u.second;
+                vector<string> to_return;
+                to_return.push_back(vertex);
+                while(temp != "") {
+                    to_return.push_back(temp);
+                    temp = prev[temp];
+                }
+                reverse(to_return.begin(), to_return.end());
+                return to_return;
+            }
+            
+            double distance = dist[u.second] == INT_MAX ? 0 : dist[u.second];
+            auto temp_dist = distance + (1.0 / _graph[u.second].GetWeight(vertex));
+            if (temp_dist < dist[vertex]) {
+                dist[vertex] = temp_dist;
+                prev[vertex] = u.second;
+                pq.push(make_pair(dist[vertex], vertex));
+            }
+        }
+    }
+    return vector<string>();
 }
 
 bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& playlist, unordered_map<string, bool>& visited, int song_tier)  {
