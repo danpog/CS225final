@@ -11,7 +11,7 @@
 #include <climits>
 using namespace std;
 
-
+/*
 Graph::Graph(string file) {
     Json::Value all_nodes_json;
     std::ifstream graph_file(file);
@@ -48,7 +48,9 @@ Graph::Graph(string file) {
             _graph[artist].AddSongPair(s, frequency2);
         }
     }
+
 }
+*/
 
 Graph::Graph(vector<Playlist>& playlists)    {
     analyze_all_playlists(playlists);
@@ -255,7 +257,7 @@ bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& pla
     }
     return false;
 }
-
+/*
 bool Graph::SendPlaylistToSpotify(Playlist& playlist, string uid, string playlist_id) {
     for (int hundredcount = 0; hundredcount < (playlist.SongCount() - 1)/100 + 1; hundredcount++) {
         std::ifstream myfile ("./terminal_output.txt");
@@ -414,6 +416,7 @@ string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, s
     }
     return line;
 }
+*/
 
 string Graph::somethingNew(string artist1, int distance) {
     unordered_set <string> visited;
@@ -483,6 +486,7 @@ bool Graph::similarity(string artist1, string artist2, int distance, vector<stri
     }
     return false;
 }
+/*
 vector<Playlist> Graph::ParseJSON(string filename) {
     if (filename.empty()) {
         throw std::invalid_argument("No file name");
@@ -518,6 +522,7 @@ vector<Playlist> Graph::ParseJSON(string filename) {
 
     return all_playlists;
 }
+*/
 
 vector<Playlist> Graph::ParseCSV(string filename)  {
     if (filename.empty()) {

@@ -1,6 +1,3 @@
-#include "../lib/song.h"
-#include "../lib/playlist.h"
-#include "../lib/node.h"
 #include "../src/graph.h"
 
 
@@ -8,14 +5,13 @@
 #include <ctime>
 #include <chrono>
 
-#include <json/json.h>
-
 using namespace std;
 
 void PrintSong(Song& s) {
     std::cout << s._name << endl << s._album << endl << s._artist << endl << endl;
 }
 
+/*
 void JSONtoCSV(string json, string csv)  {
     if (json.empty()) {
         throw std::invalid_argument("No file name");
@@ -53,8 +49,10 @@ void JSONtoCSV(string json, string csv)  {
     }
     csv_file.close();
 }
+*/
 int main(int argc, char *argv[])  {
     bool make_playlist = false;
+    /*
     if (argc != 6)  {
         cout << "If you want to create a playlist, use these arguments in this order: " << endl;
         cout << "(string) user_id" << endl;
@@ -85,9 +83,9 @@ int main(int argc, char *argv[])  {
             return 0;
         }
     }
+    */
     
-    
-
+    Graph graph = Graph();
     chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
@@ -173,14 +171,15 @@ int main(int argc, char *argv[])  {
     //dire straits
     //peter gabriel
     //jimmy hendricks
+    /*
     if (make_playlist)  {
         Playlist p = graph.CreatePlaylist(num_songs, song_prefs);
         graph.SendPlaylistToSpotify(p, token, playlist_link);
     }
-    else    {
+    */
+    //else    { }
         //Playlist p = graph.CreatePlaylist(100, song_prefs);
         //cout << p << endl;
-    }
     
     /*for (string artist1 : artists) {
         std::cout << artist1 << std::endl;
@@ -200,9 +199,7 @@ int main(int argc, char *argv[])  {
     }*/
     cout << "graph generated in " << t << " seconds" << endl;
     cout << "neighbors trimmed in " << t2 << "seconds" << endl;
-    if (make_playlist)  {
-        std::cout <<"Your Playlist: " << "https://open.spotify.com/playlist/" + playlist_link << std::endl;
-    }
+    // if (make_playlist)  { std::cout <<"Your Playlist: " << "https://open.spotify.com/playlist/" + playlist_link << std::endl; }
     
     return 0;
 }

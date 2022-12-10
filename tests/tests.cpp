@@ -8,9 +8,6 @@
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <catch/catch.hpp>
-#include "../lib/node.cpp"
-#include "../lib/playlist.cpp"
-#include "../lib/song.cpp"
 #include "../src/graph.cpp"
 #include <json/json.h>
 
@@ -18,6 +15,7 @@
 //                             Helpers/Constants //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
 vector<Playlist> parse(string filename)    {
     if (filename.empty()) {
         throw std::invalid_argument("No file name");
@@ -53,6 +51,7 @@ vector<Playlist> parse(string filename)    {
 
     return all_playlists;
 }
+*/
 
 bool NeighborsContain(Node* node, Node* target, double count)   {
     return node->GetNeighbors()[target] == count;
@@ -74,7 +73,7 @@ TEST_CASE("Check Song Equality") {
 TEST_CASE("Check Neighbors") { 
     vector<Playlist> a;
     
-    a = parse("./tests/old_testing/SongsLimit.json");
+    //a = parse("./tests/old_testing/SongsLimit.json");
     Graph graph = Graph(a);
     for (auto x: graph.getGraph()) {
         graph.GetNode(x.first)->TrimNeighbors(3, true);
@@ -97,7 +96,7 @@ TEST_CASE("Check Neighbors") {
 TEST_CASE("Check Playlist") { 
     vector<Playlist> a;
     
-    a = parse("./tests/old_testing/SongsLimit.json");
+    //a = parse("./tests/old_testing/SongsLimit.json");
     Graph graph = Graph(a);
     for (auto x: graph.getGraph()) {
         graph.GetNode(x.first)->TrimNeighbors(3, false);
@@ -122,7 +121,7 @@ TEST_CASE("Check Playlist") {
 TEST_CASE("Check playlist larger") {
     vector<Playlist> a;
 
-    a = parse("./tests/old_testing/Songs0-600.json");
+    // a = parse("./tests/old_testing/Songs0-600.json");
     Graph graph = Graph(a);
     for (auto x: graph.getGraph()) {
         graph.GetNode(x.first)->TrimNeighbors(3, false);

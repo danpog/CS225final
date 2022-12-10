@@ -1,7 +1,7 @@
 #pragma once
-#include "../lib/song.h"
-#include "../lib/playlist.h"
-#include "../lib/node.h"
+#include "song.h"
+#include "playlist.h"
+#include "node.h"
 
 #include <vector>
 #include <string>
