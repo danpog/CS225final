@@ -4,15 +4,16 @@
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-//                                 Includes //
+//                                 Includes                                                //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <catch2/catch_test_macros.hpp>
 #include "../src/graph.cpp"
+#include "../src/utils.h"
 //#include <json/json.h>
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-//                             Helpers/Constants //
+//                             Helpers/Constants                                           //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -21,7 +22,7 @@ bool NeighborsContain(Node* node, Node* target, double count)   {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-//                                Test Cases //
+//                                Test Cases                                               //
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 TEST_CASE("Check Song Equality") { 
@@ -60,7 +61,7 @@ TEST_CASE("Check Neighbors") {
     
     //a = parse("./tests/old_testing/SongsLimit.json");
     Graph graph;
-    a = graph.ParseCSV("../tests/test_playlist.csv");
+    a = ParseCSV("../tests/test_playlist.csv");
     graph.analyze_all_playlists(a);
     for (auto x: graph.getGraph()) {
         graph.GetNode(x.first)->TrimNeighbors(3, true);
@@ -84,7 +85,7 @@ TEST_CASE("Check Playlist") {
     vector<Playlist> a;
     
     Graph graph;
-    a = graph.ParseCSV("../tests/test_playlist.csv");
+    a = ParseCSV("../tests/test_playlist.csv");
     graph.analyze_all_playlists(a);
     for (auto x: graph.getGraph()) {
         graph.GetNode(x.first)->TrimNeighbors(3, true);
@@ -110,7 +111,7 @@ TEST_CASE("Check playlist larger") {
     vector<Playlist> a;
     
     Graph graph;
-    a = graph.ParseCSV("../tests/test_playlist_large.csv");
+    a = ParseCSV("../tests/test_playlist_large.csv");
     graph.analyze_all_playlists(a);
     for (auto x: graph.getGraph()) {
         graph.GetNode(x.first)->TrimNeighbors(3, true);

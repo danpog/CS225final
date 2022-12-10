@@ -15,8 +15,7 @@ class Graph {
         Graph(vector<Playlist>& playlists);
         Graph(string file);
 
-        vector<Playlist> ParseJSON(string filename);
-        vector<Playlist> ParseCSV(string filename);
+        
         void analyze_all_playlists(vector<Playlist>& playlists);
         void save_graph(string file);
 
@@ -39,5 +38,4 @@ class Graph {
         void update_graph(Playlist& playlist);
         unordered_map<string, Node> _graph;
         bool RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& playlist, unordered_map<string, bool>& visited, int song_tier);
-        int SplitString(const std::string & str1, char sep, std::vector<std::string> &fields); //thanks to CS 225 :)
 };

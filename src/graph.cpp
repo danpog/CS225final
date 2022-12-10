@@ -1,4 +1,5 @@
 #include "graph.h"
+#include "utils.h"
 
 #include <unordered_set>
 #include <stack>
@@ -165,7 +166,7 @@ void Graph::save_graph(string file) {
     std::string artist = Json::writeString(builder, graph_json["nodes"][0]["artist"]);
     std::string neighbor = Json::writeString(builder, graph_json["nodes"][0]["neighbors"][0]["artist"]);
     int frequency = graph_json["nodes"][0]["neighbors"][0]["frequency"].asInt();
-    cout << endl << "artist: " << artist << " neighbor: " << neighbor << " frequency: " << frequency<< endl;*/
+    */
 }
 Playlist Graph::CreatePlaylist(int num_songs, vector<Song>& preferences)    {
     int sum = 0;
@@ -442,9 +443,6 @@ string Graph::somethingNew(string artist1, int distance) {
         }
         cur_artist = next_node->GetArtist();
     }
-    for (string artist: visited_ordered) {
-        cout << artist << endl;
-    }
     return cur_artist;
 }
 
@@ -456,12 +454,10 @@ bool Graph::similarity(string artist1, string artist2, int distance) {
     path.push_back(artist1);
     for (auto neighbor: this->FindNeighbors(artist1)) {
         if (neighbor.first->GetArtist() == artist2) {
-            cout << neighbor.first->GetArtist() << endl;
             return true;
         }
         path.push_back(neighbor.first->GetArtist());
         if(similarity(neighbor.first->GetArtist(), artist2, distance-1, path)) {
-            cout << neighbor.first->GetArtist() << endl;
             return true;
         } else {
             path.pop_back();
@@ -476,13 +472,11 @@ bool Graph::similarity(string artist1, string artist2, int distance, vector<stri
     }
     for (auto neighbor: this->FindNeighbors(artist1)) {
         if (neighbor.first->GetArtist() == artist2) {
-            cout << neighbor.first->GetArtist() << endl;
             return true;
         }
         if(find(path.begin(), path.end(), neighbor.first->GetArtist()) == path.end()) {
             path.push_back(neighbor.first->GetArtist());
             if(similarity(neighbor.first->GetArtist(), artist2, distance-1, path)) {
-                cout << neighbor.first->GetArtist() << endl;
                 return true;
             } else {
                 path.pop_back();
@@ -490,116 +484,4 @@ bool Graph::similarity(string artist1, string artist2, int distance, vector<stri
         }
     }
     return false;
-}
-/*
-vector<Playlist> Graph::ParseJSON(string filename) {
-    if (filename.empty()) {
-        throw std::invalid_argument("No file name");
-    }
-    
-    vector<Playlist> all_playlists = vector<Playlist>();
-    Json::Value all_playlists_json; 
-
-    std::ifstream playlist_file(filename);
-    playlist_file >> all_playlists_json;
-
-    // cout << all_playlists_json; // This will print the entire json object.
-    std::cout << all_playlists_json["info"]; 
-    Json::StreamWriterBuilder builder;
-    // builder["indentation"] = ""; // If you want whitespace-less output
-
-    for(Json::Value playlist: all_playlists_json["playlists"]) {
-        const std::string name = Json::writeString(builder, playlist["name"]);
-        Json::Value pid = playlist["pid"];
-        int id = pid.asInt();
-        Playlist p = Playlist(name);
-        p.SetID(id);
-        for (Json::Value track: playlist["tracks"]) {
-            std::string name = Json::writeString(builder, track["track_name"]);
-            std::string artist = Json::writeString(builder, track["artist_name"]);
-            std::string album_name = Json::writeString(builder, track["album_name"]);
-            std::string uri = Json::writeString(builder, track["track_uri"]);
-            Song s = Song(name, album_name, artist, uri);
-            p.AddSong(s);
-        }
-        all_playlists.push_back(p);
-    }
-
-    return all_playlists;
-}
-*/
-
-vector<Playlist> Graph::ParseCSV(string filename)  {
-    if (filename.empty()) {
-        throw std::invalid_argument("No file name");
-    }
-
-    vector<Playlist> all_playlists = vector<Playlist>();
-    std::ifstream playlist_file(filename);
-    string line;
-    std::getline(playlist_file,line);
-    while (playlist_file.good())    {
-        if (line.substr(0,9) == "Playlist:") {
-            vector<string> parts;
-            int count = SplitString(line, ',', parts);
-            if (count > 3) {
-                string s = parts[1];
-                for (int i = 2; i < count - 1; i++) {
-                    s += parts[i];
-                }
-                parts[1] = s;
-                parts[2] = parts[count - 1];
-            }
-            Playlist p(parts[1]);
-            p.SetID(std::stoi(parts[2]));
-            if (std::stoi(parts[2]) % 1000 == 0)    {
-                cout << "Parsing playlist " << parts[2]<< endl;
-            }
-            if (!playlist_file.good())  {
-                break;
-            }
-            std::getline(playlist_file,line);
-            while (line.substr(0,9) != "Playlist:") {
-                vector<string> song;
-                int length = SplitString(line, ',', song);
-                if (length  == 0)   {
-                    break;
-                }
-                if (length != 4)    {
-                    int temp = 0;
-                    for (int i = 0; i < 4; i++){
-                        string curr;
-                        curr += song[temp];
-                        while (song[temp].at(song[temp].length() - 1) != '\"')  {
-                            temp++;
-                            curr += "," + song[temp];
-                        }
-                        temp++;
-                        song[i] = curr;
-                    }
-                }
-                Song s = Song(song[0], song[1], song[2], song[3]);
-                p.AddSong(s);
-                if (!playlist_file.good())  {
-                    break;
-                }
-                std::getline(playlist_file,line);
-                if (line.size() == 0)   {
-                    break;
-                }
-            }
-            all_playlists.push_back(p);
-        }
-    }
-    return all_playlists;
-}
-int Graph::SplitString(const std::string & str1, char sep, std::vector<std::string> &fields) {
-    std::string str = str1;
-    std::string::size_type pos;
-    while((pos=str.find(sep)) != std::string::npos) {
-        fields.push_back(str.substr(0,pos));
-        str.erase(0,pos+1);  
-    }
-    fields.push_back(str);
-    return fields.size();
 }
