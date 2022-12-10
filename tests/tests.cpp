@@ -33,6 +33,28 @@ TEST_CASE("Check Song Equality") {
     REQUIRE_FALSE(s == t);
 }
 
+TEST_CASE("Check Request Song") {
+    Node n("artist");
+    Song q = Song("a1", "b", "artist", "A");
+    Song r = Song("a2", "b", "artist", "B");
+    Song s = Song("a3", "b", "artist", "C");
+    Song t = Song("a4", "b", "artist", "D");
+    Song u = Song("a5", "b", "artist", "E");
+    Song v = Song("a6", "b", "artist", "F");
+    n.AddSongPair(q, 6);
+    n.AddSongPair(r, 5);
+    n.AddSongPair(s, 4);
+    n.AddSongPair(t, 3);
+    n.AddSongPair(u, 2);
+    n.AddSongPair(v, 1);
+    REQUIRE(n.RequestSong(50) == t);
+    REQUIRE(n.RequestSong(50) == u);
+    REQUIRE(n.RequestSong(50) == s);
+    REQUIRE(n.RequestSong(50) == v);
+    REQUIRE(n.RequestSong(50) == r);
+    REQUIRE(n.RequestSong(50) == q);
+}
+
 TEST_CASE("Check Neighbors") { 
     vector<Playlist> a;
     
