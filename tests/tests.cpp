@@ -140,25 +140,25 @@ TEST_CASE("Check playlist constructed") {
     REQUIRE(p.ContainsSongByName("a1")); 
 
     Playlist p2 = g.CreatePlaylist(3, songs);
-    REQUIRE(p.GetSongs().size() == 3);
+    REQUIRE(p2.GetSongs().size() == 3);
     REQUIRE(p2.ContainsSongByName("a1"));
     REQUIRE(p2.ContainsSongByName("a2"));
 
     Playlist p3 = g.CreatePlaylist(6, songs);
-    REQUIRE(p.GetSongs().size() == 6);
+    REQUIRE(p3.GetSongs().size() == 6);
     REQUIRE(p3.ContainsSongByName("a1"));
     REQUIRE(p3.ContainsSongByName("a2"));
     REQUIRE(p3.ContainsSongByName("a3"));
 
     Playlist p4 = g.CreatePlaylist(10, songs);
-    REQUIRE(p.GetSongs().size() == 10);
+    REQUIRE(p4.GetSongs().size() == 10);
     REQUIRE(p4.ContainsSongByName("a1"));
     REQUIRE(p4.ContainsSongByName("a2"));
     REQUIRE(p4.ContainsSongByName("a3"));
     REQUIRE(p4.ContainsSongByName("a4"));
 
     Playlist p5 = g.CreatePlaylist(16, songs);
-    REQUIRE(p.GetSongs().size() == 16);
+    REQUIRE(p5.GetSongs().size() == 16);
     REQUIRE(p5.ContainsSongByName("a1"));
     REQUIRE(p5.ContainsSongByName("a2"));
     REQUIRE(p5.ContainsSongByName("a3"));

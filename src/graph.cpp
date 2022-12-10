@@ -52,6 +52,11 @@ Graph::Graph(string file) {
 }
 */
 
+Graph::Graph(string file)   {
+    vector<Playlist> a = ParseCSV(file);
+    analyze_all_playlists(a);
+}
+
 Graph::Graph(vector<Playlist>& playlists)    {
     analyze_all_playlists(playlists);
 }
@@ -257,10 +262,10 @@ bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& pla
     }
     return false;
 }
-/*
+
 bool Graph::SendPlaylistToSpotify(Playlist& playlist, string uid, string playlist_id) {
     for (int hundredcount = 0; hundredcount < (playlist.SongCount() - 1)/100 + 1; hundredcount++) {
-        std::ifstream myfile ("./terminal_output.txt");
+        //std::ifstream myfile ("../terminal_output.txt");
         chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
         chrono::system_clock::now().time_since_epoch()
         );
@@ -282,7 +287,7 @@ bool Graph::SendPlaylistToSpotify(Playlist& playlist, string uid, string playlis
         const int USER_TOKEN = 9;
 
         string command = "";
-        fstream file("./add_to_playlist_command.txt");
+        fstream file("../src/add_to_playlist_command.txt");
         string s;
         for (int i = 0; i < PLAYLIST_ID - 1; i++)   {
             std::getline(file, s);
@@ -317,18 +322,18 @@ bool Graph::SendPlaylistToSpotify(Playlist& playlist, string uid, string playlis
         while (std::getline(file,s)) {
             command += s;
         }
-        command += " > terminal_output.txt";
-        char char_array[command.length() + 1];
+        command += " > ../terminal_output.txt";
+        char* char_array = new char[command.length() + 1];
         strcpy(char_array, command.c_str());
-        char* temp = char_array;
-        system(temp);
+        system(char_array);
+        delete[] char_array;
     }
     return true;
 }
 
 string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, string description, bool pub) {
     std::ofstream ofs;
-    ofs.open("terminal_output.txt", std::ofstream::out | std::ofstream::trunc);
+    ofs.open("../terminal_output.txt", std::ofstream::out | std::ofstream::trunc);
     ofs.close();
     const int USER_ID = 3;
     const int PLAYLIST_NAME = 7;
@@ -337,7 +342,7 @@ string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, s
     const int USER_TOKEN = 19;
 
     string command = "";
-    fstream file("./create_playlist_command.txt");
+    fstream file("../src/create_playlist_command.txt");
     string s;
 
     for (int i = 0; i < USER_ID - 1; i++)   {
@@ -376,12 +381,12 @@ string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, s
     while (std::getline(file,s)) {
         command += s;
     }
-    command += " > terminal_output.txt";
-    char char_array[command.length() + 1];
+    command += " > ../terminal_output.txt";
+    char* char_array = new char[command.length() + 1];
     strcpy(char_array, command.c_str());
-    char* temp = char_array;
-    system(temp);
-    std::ifstream myfile ("./terminal_output.txt");
+    system(char_array);
+    delete[] char_array;
+    std::ifstream myfile ("../terminal_output.txt");
     chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
@@ -416,7 +421,7 @@ string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, s
     }
     return line;
 }
-*/
+
 
 string Graph::somethingNew(string artist1, int distance) {
     unordered_set <string> visited;
@@ -531,9 +536,9 @@ vector<Playlist> Graph::ParseCSV(string filename)  {
 
     vector<Playlist> all_playlists = vector<Playlist>();
     std::ifstream playlist_file(filename);
+    string line;
+    std::getline(playlist_file,line);
     while (playlist_file.good())    {
-        string line;
-        std::getline(playlist_file,line);
         if (line.substr(0,9) == "Playlist:") {
             vector<string> parts;
             int count = SplitString(line, ',', parts);
@@ -554,9 +559,12 @@ vector<Playlist> Graph::ParseCSV(string filename)  {
                 break;
             }
             std::getline(playlist_file,line);
-            while (playlist_file.good() && line.substr(0,9) != "Playlist:") {
+            while (line.substr(0,9) != "Playlist:") {
                 vector<string> song;
                 int length = SplitString(line, ',', song);
+                if (length  == 0)   {
+                    break;
+                }
                 if (length != 4)    {
                     int temp = 0;
                     for (int i = 0; i < 4; i++){
@@ -572,7 +580,13 @@ vector<Playlist> Graph::ParseCSV(string filename)  {
                 }
                 Song s = Song(song[0], song[1], song[2], song[3]);
                 p.AddSong(s);
+                if (!playlist_file.good())  {
+                    break;
+                }
                 std::getline(playlist_file,line);
+                if (line.size() == 0)   {
+                    break;
+                }
             }
             all_playlists.push_back(p);
         }
