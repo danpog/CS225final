@@ -19,19 +19,20 @@ void PrintSong(Song& s) {
     std::cout << s._name << endl << s._album << endl << s._artist << endl << endl;
 }
 
-vector<Playlist> parse(string filename)    {
-    if (filename.empty()) {
+void JSONtoCSV(string json, string csv)  {
+    if (json.empty()) {
         throw std::invalid_argument("No file name");
     }
     
     vector<Playlist> all_playlists = vector<Playlist>();
     Json::Value all_playlists_json; 
 
-    std::ifstream playlist_file(filename);
+    std::ifstream playlist_file(json);
+    std::ofstream csv_file(csv);
     playlist_file >> all_playlists_json;
 
     // cout << all_playlists_json; // This will print the entire json object.
-    std::cout << all_playlists_json["info"]; 
+    //std::cout << all_playlists_json["info"]; 
     Json::StreamWriterBuilder builder;
     // builder["indentation"] = ""; // If you want whitespace-less output
 
@@ -41,6 +42,7 @@ vector<Playlist> parse(string filename)    {
         int id = pid.asInt();
         Playlist p = Playlist(name);
         p.SetID(id);
+        csv_file << "Playlist:" << "," << name << "," << id << endl;
         for (Json::Value track: playlist["tracks"]) {
             std::string name = Json::writeString(builder, track["track_name"]);
             std::string artist = Json::writeString(builder, track["artist_name"]);
@@ -48,14 +50,11 @@ vector<Playlist> parse(string filename)    {
             std::string uri = Json::writeString(builder, track["track_uri"]);
             Song s = Song(name, album_name, artist, uri);
             p.AddSong(s);
+            csv_file << s._name << "," << s._album << "," << s._artist << "," << s._uri << endl;
         }
         all_playlists.push_back(p);
     }
-
-    return all_playlists;
-}
-bool NeighborsContain(Node* node, Node* target, double count)   {
-    return node->GetNeighbors()[target] == count;
+    csv_file.close();
 }
 int main(int argc, char *argv[])  {
     bool make_playlist = false;
@@ -101,8 +100,9 @@ int main(int argc, char *argv[])  {
     // Creating the graph
     for (int i = 0; i < 15000; i += 1000) {
         
-        a = parse("../spotify_million_playlist_dataset/data/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
+        a = graph.ParseJSON("../spotify_million_playlist_dataset/data/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
         //a = parse("mpdslices/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
+        
         graph.analyze_all_playlists(a);
     }
     
