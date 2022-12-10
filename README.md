@@ -4,6 +4,15 @@ Derived from https://www.aicrowd.com/challenges/spotify-million-playlist-dataset
 
 Group: Edan Elazar, Eli Gidron, & Daniel Pogrebinsky
 
+## Class Organization
+
+|  Folder Name   | Description                         
+|----------------|-------------------------------|
+|entry| Entry point for the code |
+|src             | Contains the structure of project: Node, Graph, Playlist, and Song   classes         |
+|tests| Contains the files for testing various functions of the code            
+|csvdata| Contains the data of 10,000 playlists in csv format
+|JSON| Support for JSON configs
 
 # Running instructions
 
