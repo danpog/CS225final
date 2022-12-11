@@ -1,7 +1,7 @@
 #include "node.h"
 #include <stdexcept>
 #include <queue>
-
+#include "utils.h"
 using namespace std;
 
 Node::Node(string artist):  _artist(artist) {}
@@ -56,6 +56,11 @@ vector<pair<Song,int>> Node::GetAllSongs() {
     return _popular_songs;
 }
 Song Node::FindSong(string title)  {
+    if (title.size() == 0)  {
+        if (!_popular_songs.empty())
+            return _popular_songs[int(SongCount()*.33)].first;
+        throw invalid_argument("Empty song, no songs to return.");
+    }
     for (size_t j = 0; j < _popular_songs.size(); j++)    {
         pair<Song, int> i = _popular_songs[j];
         if (i.first._name == title) {
@@ -63,12 +68,36 @@ Song Node::FindSong(string title)  {
         }
     }
     if (!_popular_songs.empty())    {
-         return _popular_songs[int(SongCount()/.33)].first;
+        vector<int> dist;
+        int max_string = 0;
+        for (pair<Song, int>& song : _popular_songs)   {
+            dist.push_back(LevenshteinDistance(song.first._name, title));
+            if ((int)song.first._name.size() > max_string)    {
+                max_string = song.first._name.size();
+            }
+        }
+        int min = dist[0];
+        int idx = 0;
+        for (size_t i = 0; i < dist.size(); i++)   {
+            if (dist[i] < min) {
+                min = dist[i];
+                idx = i;
+            }
+        }
+        if (min > (int)(title.length() - 1) || min > max_string) {
+            return _popular_songs[int(SongCount()*.33)].first;
+        }
+        return _popular_songs[idx].first;
     }
     throw invalid_argument("Song not found and no songs to return!");
 }
 
 int Node::FindSongPlacement(string title)   {
+    if (title.size() == 0)  {
+        if (!_popular_songs.empty())
+            return (int)(SongCount()*.33);
+        throw invalid_argument("Empty song, no songs to return.");
+    }
     for (size_t j = 0; j < _popular_songs.size(); j++)    {
         pair<Song, int> i = _popular_songs[j];
         if (i.first._name == title) {
@@ -76,7 +105,26 @@ int Node::FindSongPlacement(string title)   {
         }
     }
     if (!_popular_songs.empty())    {
-         return int(SongCount()/.33);
+        vector<int> dist;
+        int max_string = 0;
+        for (pair<Song, int>& song : _popular_songs)   {
+            dist.push_back(LevenshteinDistance(song.first._name, title));
+            if ((int)song.first._name.size() > max_string)    {
+                max_string = song.first._name.size();
+            }
+        }
+        int min = dist[0];
+        int idx = (int)(SongCount()*.33);
+        for (size_t i = 0; i < dist.size(); i++)   {
+            if (dist[i] < min) {
+                min = dist[i];
+                idx = i;
+            }
+        }
+        if (min > (int)(title.length() - 1) || min > max_string) {
+            return (int)(SongCount()*.33);
+        }
+        return idx;
     }
     throw invalid_argument("Song not found!");
 }
