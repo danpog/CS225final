@@ -67,16 +67,15 @@ int LevenshteinDistance(string a, string b){
   return to_return;
 }
 string CompareCommand(string comm)  {
-    vector<string> legal_commands = {"break", "generate", "similarity", "something new", "path between", "help"};
+    vector<string> legal_commands = {"find neighbors", "break", "generate", "similarity", "something new", "path between", "make playlist", "help"};
     if (comm == "help")   {
         string to_return;
         to_return = "Use one of these commands: ";
         for (string i : legal_commands) {
             to_return += i + ", ";
         }
-        to_return.erase(to_return.begin() + to_return.size() - 1);
-        to_return.erase(to_return.begin() + to_return.size() - 1);
-        to_return += ".";
+        
+        to_return += "or use 'help' to get more information.";
         return to_return;
     }
     vector<int> dist;
@@ -156,6 +155,7 @@ void JSONtoCSV(string json, string csv)  {
 }
 */
 int main(int argc, char *argv[])  {
+    cout << "Enter 'help' for a list of commands" << endl;
     string command;
     string param;
     Graph user_graph = Graph();
@@ -176,7 +176,17 @@ int main(int argc, char *argv[])  {
             break;
         }
         if (command == "help")  {
-            cout << CompareCommand(command) << endl;
+cout <<
+"\nList of Commands:\n"
+"break            -> ends the program\n"
+"generate         -> generates a new graph\n"
+"find neighbors   -> prints the neighbors of a given artist\n"
+"path between     -> uses Dijkstra's algorithm to find the shortest weighted path between two artists\n"
+"similarity       -> uses DFS to check if an artist is within a specified distance of another artist\n"
+"something new    -> recommends a new artist at a specified distance (1-10, 1 = most similar, 10 = least similar)\n"
+"make playlist    -> generates a playlist from three song preferences\n"
+"help             -> show command list\n"
+"Some of these commands will prompt you for additional parameters\n\n";
             continue;
         }
         if (command == "generate") {
@@ -239,6 +249,10 @@ int main(int argc, char *argv[])  {
             continue;
         }
         if (command == "pathbetween") {
+            if (graph_generated == false) {
+                cout << "         No Graph Generated" << endl;
+                continue;
+            }
             string source = "";
             string dest = "";
             cout << "Source_Artist: ";
@@ -262,6 +276,10 @@ int main(int argc, char *argv[])  {
 
         }
         if (command == "similarity") {
+            if (graph_generated == false) {
+                cout << "         No Graph Generated" << endl;
+                continue;
+            }
             string source = "";
             string dest = "";
             cout << "Source_Artist: ";
@@ -271,7 +289,7 @@ int main(int argc, char *argv[])  {
                 cout << "        Artist Not Found" << endl;
                 continue;
             }
-            cout << "Destination_artist: ";
+            cout << "Destination_Artist: ";
             getline(cin, param);
             dest = "\"" + param + "\"";
             if (user_graph.getGraph().count(dest) == 0) {
@@ -288,6 +306,92 @@ int main(int argc, char *argv[])  {
                 continue;
             }
             cout << (user_graph.similarity(source, dest, distance) ? "true" : "false") << endl;
+            continue;
+        }
+        if (command == "findneighbors") {
+            if (graph_generated == false) {
+                cout << "         No Graph Generated" << endl;
+                continue;
+            }
+            cout << "Artist: " << endl;
+            getline(cin, param);
+            string artist = "\"" + param + "\"";
+            if (user_graph.getGraph().count(artist) == 0) {
+                cout << "        Artist Not Found" << endl;
+                continue;
+            }
+            unordered_map<Node*, int> neighbors = user_graph.FindNeighbors(artist);
+            unordered_map<Node*, int>::iterator it;
+            for (it = neighbors.begin(); it != neighbors.end(); it++) {
+                cout << it->first->GetArtist() << " " << it->second << endl;
+            }
+            continue;
+        }
+        if (command == "makeplaylist")  {
+            if (graph_generated == false) {
+                cout << "         No Graph Generated" << endl;
+                continue;
+            }
+
+            string playlist_name;
+            cout << "Name of Playlist: ";
+            getline(cin, playlist_name);
+
+            cout << "# of songs: ";
+            getline(cin, param);
+            stringstream value(param);
+            int num_songs = 0;
+            value >> num_songs;
+            if (num_songs == 0) {
+                cout << "            Invalid Parameter" << endl;
+                continue;
+            }
+            if (num_songs > 1000) {
+                cout << "            Too Many Songs" << endl;
+                continue;
+            }
+            vector<Song> songs;
+            cout << "Artist (1/3): ";
+            getline(cin, param);
+            string artist1 = "\"" + param + "\"";
+            if (user_graph.getGraph().count(artist1) == 0) {
+                cout << "              Artist Not Found" << endl;
+                continue;
+            }
+            cout << "Song (1/3): ";
+            getline(cin, param);
+            string song1 = "\"" + param + "\"";
+            songs.push_back(user_graph.GetNode(artist1)->FindSong(song1));
+
+            cout << "Artist (2/3): ";
+            getline(cin, param);
+            string artist2 = "\"" + param + "\"";
+            if (user_graph.getGraph().count(artist2) == 0) {
+                cout << "              Artist Not Found" << endl;
+                continue;
+            }
+            
+            cout << "Song (2/3): ";
+            getline(cin, param);
+            string song2 = "\"" + param + "\"";
+            songs.push_back(user_graph.GetNode(artist2)->FindSong(song2));
+
+            cout << "Artist (3/3): ";
+            getline(cin, param);
+            string artist3 = "\"" + param + "\"";
+            if (user_graph.getGraph().count(artist3) == 0) {
+                cout << "              Artist Not Found" << endl;
+                continue;
+            }
+            cout << "Song (3/3): ";
+            getline(cin, param);
+            string song3 = "\"" + param + "\"";
+            songs.push_back(user_graph.GetNode(artist3)->FindSong(song3));
+
+            Playlist playlist = user_graph.CreatePlaylist(num_songs, songs);
+            playlist.SetName(playlist_name);
+
+            cout << endl << playlist << endl;
             continue;
         }
         cout << "         Invalid Command. Did you mean " << CompareCommand(command) << endl;

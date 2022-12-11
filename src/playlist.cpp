@@ -18,6 +18,11 @@ int Playlist::GetID() const {
 void Playlist::SetID(int id)  {
     _id = id;
 }
+
+void Playlist::SetName(string name) {
+    _name = name;
+}
+
 Song& Playlist::GetSong(int i) {
     if (i < 0 || i >= SongCount())  {
         throw invalid_argument("Get song of index: " + to_string(i) + " is out of bounds.");
