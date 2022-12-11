@@ -113,3 +113,57 @@ int SplitString(const std::string & str1, char sep, std::vector<std::string> &fi
     fields.push_back(str);
     return fields.size();
 }
+int min3(int x, int y, int z){
+    if(x <= y && x <= z)
+        return x;
+    if(y <=x && y <= z)
+        return y;
+    return z;
+}
+
+void clear2D(int** arr, int rows){
+  for(int i = 0; i < rows; i++){
+    delete[] arr[i];
+  }
+  
+  delete[] arr;
+}
+//this algorithm was very much found on the internet and slightly adapted
+int LevenshteinDistance(string a, string b){
+  int len_a = a.size();
+  int len_b = b.size();
+  int** matrix = new int*[len_a + 1];
+
+  for(int i = 0; i < len_a + 1; i++)    {
+    matrix[i] = new int[len_b + 1];
+  }
+
+  for(int i = 0; i < len_a + 1; i++)    {
+    matrix[i][0] = i;
+  }
+
+  for(int j = 0; j < len_b + 1; j++)    {
+    matrix[0][j] = j;
+  }
+    
+  int ins;
+  int del;
+  int rep;
+
+  for(int i = 1; i < len_a + 1; i++){
+    for(int j = 1; j < len_b + 1; j++){
+      if(a[i - 1] == b[j - 1]){
+        matrix[i][j] = matrix[i - 1][j - 1];
+      }
+      else{
+        ins = matrix[i][j - 1];
+        del = matrix[i - 1][j];
+        rep = matrix[i - 1][j - 1];
+        matrix[i][j] = 1 + min3(ins, del, rep);
+      }
+    }
+  }
+  int to_return = matrix[len_a][len_b];
+  clear2D(matrix, len_a + 1);
+  return to_return;
+}
