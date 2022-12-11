@@ -440,10 +440,7 @@ string Graph::somethingNew(string artist, int distance) {
         if (find(visited.begin(), visited.end(), pQ.top().first->GetArtist()) == visited.end()) {
             visited.push_back(pQ.top().first->GetArtist());
             string returned = somethingNew(pQ.top().first->GetArtist(), distance - 1, visited, artist, distance);
-            if (returned != "~~~~") {
-                /*for (string solution: visited) {
-                    cout << solution << endl;
-                }*/
+            if (returned != "") {
                 return returned;
             }
             visited.pop_back();
@@ -458,7 +455,7 @@ string Graph::somethingNew(string artist, int distance, vector<string>& visited,
         if ((og_distance - og_distance * 0.2 - 1) <= 0 || !similarity(og_artist, artist, og_distance - og_distance * 0.4 - 1)) {
             return artist;
         }
-        return "~~~~";
+        return "";
     }
     auto cmp = [](const pair<Node*, int>& lhs, const pair<Node*, int>& rhs)
     { return lhs.second < rhs.second;};
@@ -471,14 +468,14 @@ string Graph::somethingNew(string artist, int distance, vector<string>& visited,
         if (find(visited.begin(), visited.end(), pQ.top().first->GetArtist()) == visited.end()) {
             visited.push_back(pQ.top().first->GetArtist());
             string returned = somethingNew(pQ.top().first->GetArtist(), distance - 1, visited, og_artist, og_distance);
-            if (returned != "~~~~") {
+            if (returned != "") {
                 return returned;
             }
             visited.pop_back();
         }
         pQ.pop();
     }
-    return "~~~~";
+    return "";
 }
 
 bool Graph::similarity(string artist1, string artist2, int distance) {
