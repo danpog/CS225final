@@ -131,7 +131,7 @@ cout <<
 "path between     -> uses Dijkstra's algorithm to find the shortest weighted path between two artists\n"
 "similarity       -> uses DFS to check if an artist is within a specified distance of another artist\n"
 "something new    -> recommends a new artist at a specified distance (1-10, 1 = most similar, 10 = least similar)\n"
-"make playlist    -> generates a playlist from three song preferences\n"
+"make playlist    -> generates a playlist from three song preferences, optionally push to spotify\n"
 "help             -> show command list\n"
 "Some of these commands will prompt you for additional parameters\n\n";
             continue;
@@ -147,8 +147,12 @@ cout <<
             stringstream value(param);
             int playlists = 0;
             value >> playlists;
-            if (playlists == 0) {
+            if (playlists <= 0) {
                 cout << "                            Invalid Parameter" << endl;
+                continue;
+            }
+            if (playlists > 10) {
+                cout << "                            Too Many Playlists" << endl;
                 continue;
             }
 
@@ -186,8 +190,12 @@ cout <<
             stringstream value(param);
             int distance = 0;
             value >> distance;
-            if (distance == 0) {
+            if (distance <= 0) {
                 cout << "         Invalid Parameter" << endl;
+                continue;
+            }
+            if (distance > 10) {
+                cout << "         Depth Too Far" << endl;
                 continue;
             }
 
@@ -222,6 +230,10 @@ cout <<
             continue;
 
         }
+        if (command == "carlevans") {
+            cout << "THE GOAT" << endl;
+            continue;
+        }
         if (command == "similarity") {
             if (graph_generated == false) {
                 cout << "         No Graph Generated" << endl;
@@ -248,7 +260,7 @@ cout <<
             stringstream value(param);
             int distance = 0;
             value >> distance;
-            if (distance == 0) {
+            if (distance <= 0) {
                 cout << "         Invalid Parameter" << endl;
                 continue;
             }
@@ -289,7 +301,7 @@ cout <<
             stringstream value(param);
             int num_songs = 0;
             value >> num_songs;
-            if (num_songs == 0) {
+            if (num_songs <= 0) {
                 cout << "            Invalid Parameter" << endl;
                 continue;
             }
@@ -339,6 +351,40 @@ cout <<
             playlist.SetName(playlist_name);
 
             cout << endl << playlist << endl;
+
+            cout << "Would you like to save this playlist to spotify?" << endl;
+            cout << "(y/n): ";
+            string confirmation;
+            getline(cin, confirmation);
+
+            for (size_t i = 0; i < confirmation.length(); i++)  {
+                confirmation[i] = tolower(confirmation[i]);
+                if (confirmation.at(i) == ' ' || !isalpha(confirmation.at(i)))   {
+                    confirmation.erase(confirmation.begin() + i);
+                    i--;
+                }
+            }
+
+            if (confirmation != "y" && confirmation != "yes") {
+                continue;
+            }
+
+            cout << "User ID (check readme for instructions): ";
+            string user_id;
+            getline(cin, user_id);
+
+            cout << "Token (check readme for instructions): ";
+            string token;
+            getline(cin, token);
+
+            string playlist_id = user_graph.CreateSpotifyPlaylist(user_id, token, playlist_name, "", false);
+            if (playlist_id == "error") {
+                cout << "An Error Has Occured - Could Not Create Playlist" << endl;
+                continue;
+            }
+
+            user_graph.SendPlaylistToSpotify(playlist, token, playlist_id);
+            std::cout <<"Your Playlist: " << "https://open.spotify.com/playlist/" + playlist_name << std::endl;
             continue;
         }
         cout << "         Invalid Command. Did you mean " << CompareCommand(command) << endl;
@@ -441,7 +487,7 @@ cout <<
     artists.push_back("\"Jimi Hendrix\"");
 
     vector<Song> song_prefs;
-    Node* n = graph.GetNode("\"Crosby, Stills, Nash & Young\"");
+   /* Node* n = graph.GetNode("\"Crosby, Stills, Nash & Young\"");
     //song_prefs.push_back(n -> FindSong("\"Almost Cut My Hair\""));
     
     n = graph.GetNode("\"Pink Floyd\"");
@@ -458,7 +504,7 @@ cout <<
 
     n = graph.GetNode("\"Jimi Hendrix\"");
     s = n -> GetAllSongs();
-    song_prefs.push_back(s[s.size()/2].first);
+    song_prefs.push_back(s[s.size()/2].first);*/
     //Almost Cut My Hair Song by Crosby, Stills, Nash & Young
     //pink flloyd
     //dire straits

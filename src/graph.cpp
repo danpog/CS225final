@@ -417,6 +417,7 @@ string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, s
         command += s;
     }
     command += " > ../terminal_output.txt";
+    cout << command << endl;
     char* char_array = new char[command.length() + 1];
     strcpy(char_array, command.c_str());
     system(char_array);
