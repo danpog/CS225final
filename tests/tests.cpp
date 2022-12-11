@@ -148,7 +148,7 @@ TEST_CASE("Large Playlist") {
     a = ParseCSV("../tests/test_playlist_large.csv");
     graph.analyze_all_playlists(a);
     for (auto x: graph.getGraph()) {
-        graph.GetNode(x.first)->TrimNeighbors(3, true);
+        graph.GetNode(x.first)->TrimNeighbors(5, true);
     }
     
     vector<Song> song_prefs;

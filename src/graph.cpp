@@ -253,13 +253,47 @@ bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& pla
     unordered_map<Node*, int>& neighbors =  source -> GetNeighbors();
 
     unordered_map<Node*, int>::iterator it;
-    for (it = neighbors.begin(); it != neighbors.end(); it++)  {
+    if (neighbors.size() > 3)   {
+        Node* top3[3];
+        for (int i = 0; i < 3; i++) {
+            top3[i] = NULL;
+        }
+        for (it = neighbors.begin(); it != neighbors.end(); it++)  {
+            if (top3[0] == NULL || it -> second > neighbors[top3[0]])    {
+                top3[2] = top3[1];
+                top3[1] = top3[0];
+                top3[0] = it -> first;
+            }
+            else if (top3[1] == NULL || it -> second > neighbors[top3[1]])  {
+                top3[2] = top3[1];
+                top3[1] = it -> first;
+            }
+            else if (top3[2] == NULL || it -> second > neighbors[top3[2]])  {
+                top3[2] = it -> first;
+            }
+        }
+        for (Node* n : top3)    {
+            if (n == NULL)  {
+                continue;
+            }
+            
+            if (visited[n -> GetArtist()])   {
+                continue;
+            }
+            if (RecurseDFS(n, num_songs, depth - 1, playlist, visited, song_tier))   {
+                return true;
+            }
+        }
+    }
+    else    {
+        for (it = neighbors.begin(); it != neighbors.end(); it++)  {
         if (visited[it -> first -> GetArtist()])   {
             continue;
         }
         if (RecurseDFS(it -> first, num_songs, depth - 1, playlist, visited, song_tier))   {
             return true;
         }
+    }
     }
     return false;
 }
