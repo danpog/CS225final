@@ -389,7 +389,7 @@ cout <<
             }
 
             user_graph.SendPlaylistToSpotify(playlist, token, playlist_id);
-            std::cout <<"Your Playlist: " << "https://open.spotify.com/playlist/" + playlist_name << std::endl;
+            std::cout <<"Your Playlist: " << "https://open.spotify.com/playlist/" + playlist_id << std::endl;
             continue;
         }
         cout << "         Invalid Command. Did you mean " << CompareCommand(command) << endl;
