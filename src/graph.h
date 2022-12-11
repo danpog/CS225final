@@ -35,6 +35,7 @@ class Graph {
     private:
         void analyze_playlist(Playlist& playlist);
         bool similarity(string artist1, string artist2, int distance, vector<string>& path);
+        string somethingNew(string artist, int distance, vector<string>& visited, string og_artist, int og_distance);
         void update_graph(Playlist& playlist);
         unordered_map<string, Node> _graph;
         bool RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& playlist, unordered_map<string, bool>& visited, int song_tier);

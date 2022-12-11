@@ -423,27 +423,62 @@ string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, s
     return line;
 }
 
-
-string Graph::somethingNew(string artist1, int distance) {
-    unordered_set <string> visited;
-    vector<string> visited_ordered;
-    int max_weight;
-    Node* next_node;
-    string cur_artist = artist1;
-    visited.insert(cur_artist);
-    for (int i = 0; i < distance; i++) {
-        visited_ordered.push_back(cur_artist);
-        max_weight = 0;
-        for (auto neighbor: this->FindNeighbors(cur_artist)) {
-            if(neighbor.second > max_weight && visited.find(neighbor.first->GetArtist()) == visited.end()) {
-                max_weight = neighbor.second;
-                next_node = neighbor.first;
-            }
-            visited.insert(neighbor.first->GetArtist());
-        }
-        cur_artist = next_node->GetArtist();
+string Graph::somethingNew(string artist, int distance) {
+    vector<string> visited;
+    visited.push_back(artist);
+    if (distance == 0) {
+        return artist;
     }
-    return cur_artist;
+    auto cmp = [](const pair<Node*, int>& lhs, const pair<Node*, int>& rhs)
+    { return lhs.second < rhs.second;};
+    priority_queue<pair<Node*, int>, vector<pair<Node*, int>>, decltype(cmp) > pQ(cmp);
+    for(auto const& x : this->FindNeighbors(artist)) {
+        pQ.push(x);
+    }
+
+    while(!pQ.empty()) {
+        if (find(visited.begin(), visited.end(), pQ.top().first->GetArtist()) == visited.end()) {
+            visited.push_back(pQ.top().first->GetArtist());
+            string returned = somethingNew(pQ.top().first->GetArtist(), distance - 1, visited, artist, distance);
+            if (returned != "~~~~") {
+                /*for (string solution: visited) {
+                    cout << solution << endl;
+                }*/
+                return returned;
+            }
+            visited.pop_back();
+        }
+        pQ.pop();
+    }
+    return "Depth Too Far";
+}
+
+string Graph::somethingNew(string artist, int distance, vector<string>& visited, string og_artist, int og_distance) {
+    if (distance == 0) {
+        if ((og_distance - og_distance * 0.2 - 1) <= 0 || !similarity(og_artist, artist, og_distance - og_distance * 0.4 - 1)) {
+            return artist;
+        }
+        return "~~~~";
+    }
+    auto cmp = [](const pair<Node*, int>& lhs, const pair<Node*, int>& rhs)
+    { return lhs.second < rhs.second;};
+    priority_queue<pair<Node*, int>, vector<pair<Node*, int>>, decltype(cmp) > pQ(cmp);
+    for(auto const& x : this->FindNeighbors(artist)) {
+        pQ.push(x);
+    }
+
+    while(!pQ.empty()) {
+        if (find(visited.begin(), visited.end(), pQ.top().first->GetArtist()) == visited.end()) {
+            visited.push_back(pQ.top().first->GetArtist());
+            string returned = somethingNew(pQ.top().first->GetArtist(), distance - 1, visited, og_artist, og_distance);
+            if (returned != "~~~~") {
+                return returned;
+            }
+            visited.pop_back();
+        }
+        pQ.pop();
+    }
+    return "~~~~";
 }
 
 bool Graph::similarity(string artist1, string artist2, int distance) {

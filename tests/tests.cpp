@@ -260,15 +260,15 @@ TEST_CASE("Constructed Graph Give Me Something New")  {
 }
 
 TEST_CASE("Give Me Something New")  {
-    /*vector<Playlist> a;
+    vector<Playlist> a;
     Graph graph;
     a = ParseCSV("../csvdata/mpd.slice.0-999.csv");
     graph.analyze_all_playlists(a);
     for (auto x: graph.getGraph()) {
-        graph.GetNode(x.first)->TrimNeighbors(10, true);
+        graph.GetNode(x.first)->TrimNeighbors(5, true);
     }
-    cout << graph.somethingNew("\"Missy Elliott\"", 1) << endl;
-    cout << graph.somethingNew("\"Missy Elliott\"", 2) << endl;
-    cout << graph.somethingNew("\"Missy Elliott\"", 3) << endl;
-    cout << graph.somethingNew("\"Missy Elliott\"", 4) << endl;*/
+    REQUIRE(graph.somethingNew("\"Missy Elliott\"", 1) == "\"Anthony Hamilton\"");
+    REQUIRE(graph.somethingNew("\"Missy Elliott\"", 2) == "\"Chrisette Michele\"");
+    REQUIRE(graph.somethingNew("\"Missy Elliott\"", 3) == "\"Damian Marley\"");
+    REQUIRE(graph.somethingNew("\"Missy Elliott\"", 4) == "Depth Too Far");
 }
