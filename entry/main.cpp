@@ -214,17 +214,22 @@ cout <<
             getline(cin, param);
             source = "\"" + param + "\"";
             if (user_graph.getGraph().count(source) == 0) {
-                cout << "        Artist Not Found" << endl;
+                cout << "               Artist Not Found" << endl;
                 continue;
             }
             cout << "Destination_artist: ";
             getline(cin, param);
             dest = "\"" + param + "\"";
             if (user_graph.getGraph().count(dest) == 0) {
-                cout << "        Artist Not Found" << endl;
+                cout << "                    Artist Not Found" << endl;
                 continue;
             }
-            for (string artist: user_graph.Dijkstras(source, dest)) {
+            vector<string> artists = user_graph.Dijkstras(source, dest);
+            if(artists.size() == 0) {
+                cout << "Path not Found" << endl;
+                continue;
+            }
+            for (string artist: artists) {
                 cout << artist << endl;
             }
             continue;
