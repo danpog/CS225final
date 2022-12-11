@@ -1,9 +1,10 @@
 #include "../src/graph.h"
-
+#include "../src/utils.h"
 
 #include <fstream>
 #include <ctime>
 #include <chrono>
+#include <sstream>
 
 using namespace std;
 
@@ -51,6 +52,131 @@ void JSONtoCSV(string json, string csv)  {
 }
 */
 int main(int argc, char *argv[])  {
+    string command;
+    string param;
+    Graph user_graph = Graph();
+    bool graph_generated = false;
+    while(true) {
+        cout << "Command: ";
+        command = "";
+        getline(cin, command);
+        if (command == "break") {
+            break;
+        }
+        if (command == "generate") {
+            if (graph_generated == true) {
+                cout << "         Graph Already Generated" << endl;
+                continue;
+            }
+            cout << "# of playlists (thousands): ";
+            param = "";
+            getline(cin, param);
+            stringstream value(param);
+            int playlists = 0;
+            value >> playlists;
+            if (playlists == 0) {
+                cout << "                            Invalid Parameter" << endl;
+                continue;
+            }
+
+            cout << "Generating Graph..." << endl;
+            vector<Playlist> a;
+            for (int i = 0; i < playlists * 1000; i += 1000) {
+                a = ParseCSV("../csvdata/mpd.slice."  + to_string(i) + "-" + to_string(i + 999) + ".csv");
+                user_graph.analyze_all_playlists(a);
+            }
+
+            cout << "Trimming Neighbors..." << endl;
+            for (auto x: user_graph.getGraph()) {
+                user_graph.GetNode(x.first)->TrimNeighbors(5, true);
+            }
+            cout << "Graph Generation Complete" << endl;
+            graph_generated = true;
+            continue;
+        }
+        if (command == "something_new") {
+            if (graph_generated == false) {
+                cout << "         No Graph Generated" << endl;
+                continue;
+            }
+            cout << "Artist: ";
+            param = "";
+            getline(cin, param);
+            string artist = "\"" + param + "\"";
+            if (user_graph.getGraph().count(artist) == 0) {
+                cout << "        Artist Not Found" << endl;
+                continue;
+            }
+            param = "";
+            cout << "Disance: ";
+            getline(cin, param);
+            stringstream value(param);
+            int distance = 0;
+            value >> distance;
+            if (distance == 0) {
+                cout << "         Invalid Parameter" << endl;
+                continue;
+            }
+
+            cout << user_graph.somethingNew(artist, distance) << endl;
+            
+            continue;
+        }
+        if (command == "path_between") {
+            string source = "";
+            string dest = "";
+            cout << "Source_Artist: ";
+            getline(cin, param);
+            source = "\"" + param + "\"";
+            if (user_graph.getGraph().count(source) == 0) {
+                cout << "        Artist Not Found" << endl;
+                continue;
+            }
+            cout << "Destination_artist: ";
+            getline(cin, param);
+            dest = "\"" + param + "\"";
+            if (user_graph.getGraph().count(dest) == 0) {
+                cout << "        Artist Not Found" << endl;
+                continue;
+            }
+            for (string artist: user_graph.Dijkstras(source, dest)) {
+                cout << artist << endl;
+            }
+            continue;
+
+        }
+        if (command == "similarity") {
+            string source = "";
+            string dest = "";
+            cout << "Source_Artist: ";
+            getline(cin, param);
+            source = "\"" + param + "\"";
+            if (user_graph.getGraph().count(source) == 0) {
+                cout << "        Artist Not Found" << endl;
+                continue;
+            }
+            cout << "Destination_artist: ";
+            getline(cin, param);
+            dest = "\"" + param + "\"";
+            if (user_graph.getGraph().count(dest) == 0) {
+                cout << "        Artist Not Found" << endl;
+                continue;
+            }
+            cout << "Distance: " << endl;
+            getline(cin, param);
+            stringstream value(param);
+            int distance = 0;
+            value >> distance;
+            if (distance == 0) {
+                cout << "         Invalid Parameter" << endl;
+                continue;
+            }
+            cout << (user_graph.similarity(source, dest, distance) ? "true" : "false") << endl;
+            continue;
+        }
+        cout << "         Invalid Command" << endl;
+    }
+    return 0;
     bool make_playlist = false;
     /*
     if (argc != 6)  {
@@ -96,7 +222,7 @@ int main(int argc, char *argv[])  {
     for (int i = 0; i < 10000; i += 1000) {
         //a = graph.ParseJSON("/workspaces/cs225env/spotify_million_playlist_dataset/data/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
         //a = parse("mpdslices/mpd.slice." + to_string(i) + "-" + to_string(i + 999) + ".json");
-        a = graph.ParseCSV("/workspaces/cs225env/CS225final/csvdata/mpd.slice."  + to_string(i) + "-" + to_string(i + 999) + ".csv");
+        a = ParseCSV("/workspaces/cs225env/CS225final/csvdata/mpd.slice."  + to_string(i) + "-" + to_string(i + 999) + ".csv");
         graph.analyze_all_playlists(a);
     }
     
