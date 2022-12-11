@@ -5,13 +5,117 @@
 #include <ctime>
 #include <chrono>
 #include <sstream>
-
+#include <cmath>
+#include <cstring>
 using namespace std;
 
 void PrintSong(Song& s) {
     std::cout << s._name << endl << s._album << endl << s._artist << endl << endl;
 }
+int min3(int x, int y, int z){
+    if(x <= y && x <= z)
+        return x;
+    if(y <=x && y <= z)
+        return y;
+    return z;
+}
 
+void clear2D(int** arr, int rows){
+  for(int i = 0; i < rows; i++){
+    delete[] arr[i];
+  }
+  
+  delete[] arr;
+}
+//this algorithm was very much found on the internet and slightly adapted
+int LevenshteinDistance(string a, string b){
+  int len_a = a.size();
+  int len_b = b.size();
+  int** matrix = new int*[len_a + 1];
+
+  for(int i = 0; i < len_a + 1; i++)    {
+    matrix[i] = new int[len_b + 1];
+  }
+
+  for(int i = 0; i < len_a + 1; i++)    {
+    matrix[i][0] = i;
+  }
+
+  for(int j = 0; j < len_b + 1; j++)    {
+    matrix[0][j] = j;
+  }
+    
+  int ins;
+  int del;
+  int rep;
+
+  for(int i = 1; i < len_a + 1; i++){
+    for(int j = 1; j < len_b + 1; j++){
+      if(a[i - 1] == b[j - 1]){
+        matrix[i][j] = matrix[i - 1][j - 1];
+      }
+      else{
+        ins = matrix[i][j - 1];
+        del = matrix[i - 1][j];
+        rep = matrix[i - 1][j - 1];
+        matrix[i][j] = 1 + min3(ins, del, rep);
+      }
+    }
+  }
+  int to_return = matrix[len_a][len_b];
+  clear2D(matrix, len_a + 1);
+  return to_return;
+}
+string CompareCommand(string comm)  {
+    vector<string> legal_commands = {"break", "generate", "similarity", "something new", "path between", "help"};
+    if (comm == "help")   {
+        string to_return;
+        to_return = "Use one of these commands: ";
+        for (string i : legal_commands) {
+            to_return += i + ", ";
+        }
+        to_return.erase(to_return.begin() + to_return.size() - 1);
+        to_return.erase(to_return.begin() + to_return.size() - 1);
+        to_return += ".";
+        return to_return;
+    }
+    vector<int> dist;
+    int max_string = 0;
+    for (string str : legal_commands)  {
+        if ((int)str.size() > max_string)    {
+            max_string = str.size();
+        }
+        for (size_t i = 0; i < str.length(); i++)  {
+            str[i] = tolower(str[i]);
+            if (str.at(i) == ' ' || !isalpha(str.at(i)))   {
+                str.erase(str.begin() + i);
+                i--;
+            }
+        }
+        dist.push_back(LevenshteinDistance(str, comm));
+        
+    }
+    int min = dist[0];
+    int idx = 0;
+    for (size_t i = 0; i < dist.size(); i++)   {
+        if (dist[i] < min) {
+            min = dist[i];
+            idx = i;
+        }
+    }
+    string to_return;
+    if (min > (int)(comm.length() - 1) || min > max_string)    {
+        to_return = "one of these commands: ";
+        for (string i : legal_commands) {
+            to_return += i + ", ";
+        }
+        to_return.erase(to_return.begin() + to_return.size() - 1);
+        to_return.erase(to_return.begin() + to_return.size() - 1);
+        to_return += "?";
+        return to_return;
+    }
+    return legal_commands[idx] + "?";
+}
 /*
 void JSONtoCSV(string json, string csv)  {
     if (json.empty()) {
@@ -60,8 +164,20 @@ int main(int argc, char *argv[])  {
         cout << "Command: ";
         command = "";
         getline(cin, command);
+        //remove whitespace and make everything lowercase
+        for (size_t i = 0; i < command.length(); i++)  {
+            command[i] = tolower(command[i]);
+            if (command.at(i) == ' ' || !isalpha(command.at(i)))   {
+                command.erase(command.begin() + i);
+                i--;
+            }
+        }
         if (command == "break") {
             break;
+        }
+        if (command == "help")  {
+            cout << CompareCommand(command) << endl;
+            continue;
         }
         if (command == "generate") {
             if (graph_generated == true) {
@@ -94,7 +210,7 @@ int main(int argc, char *argv[])  {
             graph_generated = true;
             continue;
         }
-        if (command == "something_new") {
+        if (command == "somethingnew") {
             if (graph_generated == false) {
                 cout << "         No Graph Generated" << endl;
                 continue;
@@ -122,7 +238,7 @@ int main(int argc, char *argv[])  {
             
             continue;
         }
-        if (command == "path_between") {
+        if (command == "pathbetween") {
             string source = "";
             string dest = "";
             cout << "Source_Artist: ";
@@ -174,7 +290,7 @@ int main(int argc, char *argv[])  {
             cout << (user_graph.similarity(source, dest, distance) ? "true" : "false") << endl;
             continue;
         }
-        cout << "         Invalid Command" << endl;
+        cout << "         Invalid Command. Did you mean " << CompareCommand(command) << endl;
     }
     return 0;
     bool make_playlist = false;
