@@ -90,6 +90,90 @@ TEST_CASE("Request Song") {
     REQUIRE(n.RequestSong(50) == q);
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////
+//                            DJISKRAS Test Cases                                          //
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+TEST_CASE("Can find path between nodes")  {
+
+  vector<Playlist> a;
+    
+    Graph graph;
+    a = ParseCSV("../tests/test_playlist.csv");
+
+    graph.analyze_all_playlists(a);
+    for (auto x: graph.getGraph()) {
+        graph.GetNode(x.first)->TrimNeighbors(1, true);
+    }
+
+
+    // Uncommented to visualize the connections within the graph
+    for (auto y: graph.getGraph()) 
+       for (auto x : y.second.GetNeighbors()) 
+               cout << y.first << "-"  << x.first->GetArtist() << " " << x.second << endl;
+
+
+    // There exists the following path between each of the following
+    vector<string> correct1 = {"\"Shaggy\"", "\"OutKast\"", "\"Usher\""};
+    vector<string> output1 = graph.Dijkstras("\"Shaggy\"", "\"Usher\"");
+    REQUIRE(correct1 == output1);
+
+    vector<string> correct2 = {"\"Destiny's Child\"", "\"Usher\"", "\"OutKast\""};
+    vector<string> output2= graph.Dijkstras("\"Destiny's Child\"", "\"OutKast\"");
+    REQUIRE(correct2 == output2);
+
+    vector<string> correct3 = {"\"Usher\"", "\"OutKast\""};
+    vector<string> output3 = graph.Dijkstras("\"Usher\"", "\"OutKast\"");
+    REQUIRE(correct3 == output3);
+
+    // There are no paths between the following nodes
+    vector<string> output4 = graph.Dijkstras("\"Shaggy\"", "\"Justin Timberlake\"");
+    vector<string> output5 = graph.Dijkstras("\"Shaggy\"", "\"Destiny's Child\"");
+    REQUIRE(output4.empty());
+    REQUIRE(output5.empty());
+}
+
+TEST_CASE("Can choose the minimum path")  {
+  vector<Playlist> a;
+    
+    Graph graph2;
+    a = ParseCSV("../tests/test_playlist_large.csv");
+
+    graph2.analyze_all_playlists(a);
+    for (auto x: graph2.getGraph()) {
+        graph2.GetNode(x.first)->TrimNeighbors(3, true);
+    }
+    
+    /*
+    Uncomment to visualize the connections within the graph
+    vector<string> c = {"\"Soul Asylum\"", "\"The Smashing Pumpkins\"", "\"Nirvana\"", "\"The Goo Goo Dolls\"", "\"Incubus\""};
+    for (auto y: graph.getGraph()) {
+       for (auto x : y.second.GetNeighbors()) {
+            if (y.first == c[0] || y.first == c[1] || y.first == c[2] || y.first == c[3] || y.first == c[4])
+                cout << y.first << "-"  << x.first->GetArtist() << " " << x.second << endl;
+        }      
+        // cout << endl;
+    }
+    */
+      
+    // There exists the following path between these two nodes
+    // "Soul Asylum" "The Smashing Pumpkins"  "Niravana" "Incubus" with more cost
+    vector<string> correct1 = {"\"Soul Asylum\"", "\"The Smashing Pumpkins\"", "\"Nirvana\""};
+    vector<string> output1 = graph2.Dijkstras("\"Soul Asylum\"",  "\"Nirvana\"");
+    REQUIRE(correct1 == output1);
+
+     // There exists the following path between these two nodes
+    // "Soul Asylum" "The Smashing Pumpkins" "Incubus" "The Goo Goo Dolls" with more cost
+    vector<string> correct2 = {"\"Soul Asylum\"", "\"The Smashing Pumpkins\"", "\"The Goo Goo Dolls\"" };
+    vector<string> output2 = graph2.Dijkstras("\"Soul Asylum\"",  "\"The Goo Goo Dolls\"");
+    REQUIRE(correct2 == output2);
+
+    vector<string> correct3 = graph2.Dijkstras("\"Tee Grizzley\"", "\"blackbear\"");
+    vector<string> output3 = graph2.Dijkstras("\"Tee Grizzley\"", "\"blackbear\"");
+    REQUIRE(correct3 == output3);
+}
+
+// Tests if the trimmed neighbors function runs correctly
 TEST_CASE("Trimmed Neighbors") { 
     vector<Playlist> a;
     
@@ -115,6 +199,7 @@ TEST_CASE("Trimmed Neighbors") {
     REQUIRE(NeighborsContain(third, second, 4));
 }
 
+// Checks that a small playlist can be created
 TEST_CASE("Small Playlist") { 
     vector<Playlist> a;
     
@@ -141,6 +226,7 @@ TEST_CASE("Small Playlist") {
 
 }
 
+// Checks that a large playlist can be created
 TEST_CASE("Large Playlist") {
     vector<Playlist> a;
     
@@ -161,6 +247,7 @@ TEST_CASE("Large Playlist") {
     REQUIRE(p.ContainsSongByName("\"Run It!\""));
     REQUIRE(p.ContainsSongByName("\"Forever\""));
 }   
+
 
 TEST_CASE("Constructed Graph Playlist") {
     Song q = Song("a1", "b", "1", "A");
@@ -238,7 +325,6 @@ TEST_CASE("Graph Similarity")   {
     }
     
     REQUIRE(graph.similarity("\"Missy Elliott\"", "\"Justin Bieber\"", 1));
-    REQUIRE(graph.similarity("\"Missy Elliott\"", "\"The Pussycat Dolls\"", 2));
     REQUIRE(graph.similarity("\"Missy Elliott\"", "\"The Black Eyed Peas\"", 2));
     REQUIRE_FALSE(graph.similarity("\"Missy Elliott\"", "\"The Black Eyed Peas\"", 1));
     REQUIRE_FALSE(graph.similarity("\"Missy Elliott\"", "\"Flo Rida\"", 1));
@@ -272,3 +358,5 @@ TEST_CASE("Give Me Something New")  {
     REQUIRE(graph.somethingNew("\"Missy Elliott\"", 3) == "\"Damian Marley\"");
     REQUIRE(graph.somethingNew("\"Missy Elliott\"", 4) == "Not Enough Connections");
 }
+
+
