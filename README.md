@@ -106,4 +106,5 @@ You may be prompted to sign in or grant certain permissions. Please do so. Final
 (without the quotes). Note that this Token expires every hour, and you can get a new one by repeating these steps.
 
 **Using The Interface**
+
 Finally, after generating a playlist using the command `make playlist` in the command-line interface, you will be asked if you want to send the playlist to Spotify. It will then prompt you for your User ID and Token, which you simply input, then hit return. After creating the playlist, upon success, the program will print a link to your new playlist in the terminal. Again, the Token expires every hour, so be sure to refresh it. 
