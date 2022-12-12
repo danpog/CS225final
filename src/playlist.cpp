@@ -3,6 +3,7 @@
 #include <stdexcept>
 using namespace std;
 
+
 std::vector<Song>& Playlist::GetSongs() {
     return _songs;
 }
@@ -29,7 +30,9 @@ Song& Playlist::GetSong(int i) {
     }
     return _songs[i];
 }
-
+/**
+* See if a playlist has a song with the given name, mostly used in testing.
+*/
 bool Playlist::ContainsSongByName(string name) {
     for (Song& i : _songs)  {
         if (i._name == name)    {
@@ -39,6 +42,9 @@ bool Playlist::ContainsSongByName(string name) {
     return false;
 }
 
+/**
+* Overide << for printing playlists.
+*/
 ostream& operator<<(ostream &out, const Playlist &p)
 {
     out << "Name of Playlist: " << p._name << endl;

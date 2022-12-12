@@ -2,43 +2,10 @@
 #include <fstream>
 using namespace std;
 
-/*
-vector<Playlist> Graph::ParseJSON(string filename) {
-    if (filename.empty()) {
-        throw std::invalid_argument("No file name");
-    }
-    
-    vector<Playlist> all_playlists = vector<Playlist>();
-    Json::Value all_playlists_json; 
-
-    std::ifstream playlist_file(filename);
-    playlist_file >> all_playlists_json;
-
-    std::cout << all_playlists_json["info"]; 
-    Json::StreamWriterBuilder builder;
-    // builder["indentation"] = ""; // If you want whitespace-less output
-
-    for(Json::Value playlist: all_playlists_json["playlists"]) {
-        const std::string name = Json::writeString(builder, playlist["name"]);
-        Json::Value pid = playlist["pid"];
-        int id = pid.asInt();
-        Playlist p = Playlist(name);
-        p.SetID(id);
-        for (Json::Value track: playlist["tracks"]) {
-            std::string name = Json::writeString(builder, track["track_name"]);
-            std::string artist = Json::writeString(builder, track["artist_name"]);
-            std::string album_name = Json::writeString(builder, track["album_name"]);
-            std::string uri = Json::writeString(builder, track["track_uri"]);
-            Song s = Song(name, album_name, artist, uri);
-            p.AddSong(s);
-        }
-        all_playlists.push_back(p);
-    }
-
-    return all_playlists;
-}
+/**
+* Turn a (properly formatted) CSV into a vector of Playlists. This does not put the Playlists
+* into a graph.
 */
-
 vector<Playlist> ParseCSV(string filename)  {
     if (filename.empty()) {
         throw std::invalid_argument("No file name");
@@ -103,6 +70,9 @@ vector<Playlist> ParseCSV(string filename)  {
     }
     return all_playlists;
 }
+/**
+* Split a string by any character (typically ','), this code was from CS 225.
+*/
 int SplitString(const std::string & str1, char sep, std::vector<std::string> &fields) {
     std::string str = str1;
     std::string::size_type pos;
@@ -113,6 +83,10 @@ int SplitString(const std::string & str1, char sep, std::vector<std::string> &fi
     fields.push_back(str);
     return fields.size();
 }
+
+/**
+* Return the minimum of 3 integers.
+*/
 int min3(int x, int y, int z){
     if(x <= y && x <= z)
         return x;
@@ -121,6 +95,9 @@ int min3(int x, int y, int z){
     return z;
 }
 
+/**
+* Free memory from a 2D array of size rows.
+*/
 void clear2D(int** arr, int rows){
   for(int i = 0; i < rows; i++){
     delete[] arr[i];
@@ -128,7 +105,10 @@ void clear2D(int** arr, int rows){
   
   delete[] arr;
 }
-//this algorithm was very much found on the internet and slightly adapted
+/**
+* Find the similarity of two strings. This algorithm was very much found on the 
+* internet and slightly adapted for our purposes.
+*/
 int LevenshteinDistance(string a, string b){
   int len_a = a.size();
   int len_b = b.size();

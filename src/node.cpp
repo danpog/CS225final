@@ -6,6 +6,12 @@ using namespace std;
 
 Node::Node(string artist):  _artist(artist) {}
 Node::Node(string artist, vector<pair<Song , int>>& songs): _artist(artist), _popular_songs(songs)  {}
+
+/**
+* Return a song from _popular_songs. This chooses a song of a similar percentage down the list
+* as song_tier. It then bounces back and forth around this song in the list, gradually choosing
+* songs further away. When it runs out of songs, it restarts from the song at song_tier. 
+*/
 Song& Node::RequestSong(int song_tier)   {
     song_tier = song_tier*SongCount()/100;
     if (SongCount() == 0)   {
@@ -48,6 +54,9 @@ Song& Node::RequestSong(int song_tier)   {
     }
     return to_return;
 }
+/**
+* Default RequestSong to choose the most popular songs.
+*/
 Song& Node::RequestSong()   {
     return RequestSong(0);
 }
@@ -55,6 +64,12 @@ Song& Node::RequestSong()   {
 vector<pair<Song,int>> Node::GetAllSongs() {
     return _popular_songs;
 }
+
+/**
+* Find the song of title within _popular_songs. If this song doesn't exist, look for a song
+* with similar spelling. If no song is similar, return a song 1/3 down the list. If there are
+* no songs to return, throw an exception.
+*/
 Song Node::FindSong(string title)  {
     if (title.size() == 0)  {
         if (!_popular_songs.empty())
@@ -92,6 +107,11 @@ Song Node::FindSong(string title)  {
     throw invalid_argument("Song not found and no songs to return!");
 }
 
+/**
+* Find the placement of a song of title within _popular_songs. If this song doesn't exist, look for a song
+* with similar spelling and return its placement. If no song is similar, return the index of 1/3 down the list.
+* If there are no songs to in _popular_songs, throw an exception.
+*/
 int Node::FindSongPlacement(string title)   {
     if (title.size() == 0)  {
         if (!_popular_songs.empty())
@@ -129,7 +149,9 @@ int Node::FindSongPlacement(string title)   {
     throw invalid_argument("Song not found!");
 }
 
-// Add song to node, updates ranking of popular songs
+/**
+* Add song to node, updates ranking of popular songs.
+*/ 
 void Node::AddSong(Song& song)    {
     //Song s = Song(song.GetName(), song.GetAlbum(), song.GetArtist());
     for (size_t i = 0; i < _popular_songs.size(); ++i)  {
@@ -146,19 +168,32 @@ void Node::AddSong(Song& song)    {
     _popular_songs.push_back(pair<Song&, int>(song, 1));
 }
 
+/**
+* Add a new song and its frequency.
+*/
 void Node::AddSongPair(Song& song, int frequency) {
     _popular_songs.push_back(pair<Song&, int>(song, frequency));
 }
-
+/**
+* Add a new neighbor, and also update said neighbor to include this node as a neighbor. 
+*/
 void Node::AddNeighbor(Node* node)   {
     _neighbors.insert(std::pair<Node*, int>(node, 0)).first -> second++;
     node->GetNeighbors().insert(std::pair<Node*, int>(this, 0)).first -> second++;
 }
 
+/**
+* Add a neighbor and a given frequency. This is used in testing and thus doesn't update 
+* the neighbor's list.
+*/
 void Node::AddNeighborPair(pair<Node*, int> neighbor) {
     _neighbors.insert(std::pair<Node*, int>(neighbor.first, neighbor.second));
 }
 
+/**
+* Trim _neighbors to only include the size most frequent neighbors. This can be done by brute
+* force (recommended for low sizes), or via a priority queue (recommended for larger sizes).
+*/
 void Node::TrimNeighbors(size_t size, bool brute) {
     unordered_map<Node*, int> _new_neighbors;
 
@@ -198,19 +233,19 @@ void Node::TrimNeighbors(size_t size, bool brute) {
     }
 }
 
+/**
+* Return the weight of a specific node. Can be 0.
+*/
 int Node::GetWeight(Node* node)  {
     unordered_map<Node*, int>::iterator it;
     if (_neighbors.count(node) == 0)    {
         return 0;
     }
     return _neighbors[node];
-    /*for (it = _neighbors.begin(); it != _neighbors.end(); it++) {
-        if (it->first == node) {
-            return it->second;
-        }
-    }
-    return 0;*/
 }
+/**
+* Return the weight of a specific node. Can be 0.
+*/
 int Node::GetWeight(string artist)   {
     unordered_map<Node*, int>::iterator it;
     for (it = _neighbors.begin(); it != _neighbors.end(); it++) {
@@ -220,6 +255,10 @@ int Node::GetWeight(string artist)   {
     }
     return 0;
 }
+
+/**
+* Overriden operators.
+*/
 
 bool operator<(Node& LHS, Node& RHS)    {
     return LHS.GetArtist() < RHS.GetArtist();

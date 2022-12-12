@@ -9,10 +9,17 @@
 #include <cstring>
 using namespace std;
 
+/**
+* Print a Song.
+*/
 void PrintSong(Song& s) {
     std::cout << s._name << endl << s._album << endl << s._artist << endl << endl;
 }
 
+/**
+* If user misstyped a command, this method will try to predict what command they attempted
+* to type. If none is found, it will return the command options.
+*/
 string CompareCommand(string comm)  {
     vector<string> legal_commands = {"find neighbors", "break", "generate", "similarity", "something new", "path between", "make playlist", "help"};
     if (comm == "help")   {
@@ -62,45 +69,7 @@ string CompareCommand(string comm)  {
     }
     return legal_commands[idx] + "?";
 }
-/*
-void JSONtoCSV(string json, string csv)  {
-    if (json.empty()) {
-        throw std::invalid_argument("No file name");
-    }
-    
-    vector<Playlist> all_playlists = vector<Playlist>();
-    Json::Value all_playlists_json; 
 
-    std::ifstream playlist_file(json);
-    std::ofstream csv_file(csv);
-    playlist_file >> all_playlists_json;
-
-    // cout << all_playlists_json; // This will print the entire json object.
-    //std::cout << all_playlists_json["info"]; 
-    Json::StreamWriterBuilder builder;
-    // builder["indentation"] = ""; // If you want whitespace-less output
-
-    for(Json::Value playlist: all_playlists_json["playlists"]) {
-        const std::string name = Json::writeString(builder, playlist["name"]);
-        Json::Value pid = playlist["pid"];
-        int id = pid.asInt();
-        Playlist p = Playlist(name);
-        p.SetID(id);
-        csv_file << "Playlist:" << "," << name << "," << id << endl;
-        for (Json::Value track: playlist["tracks"]) {
-            std::string name = Json::writeString(builder, track["track_name"]);
-            std::string artist = Json::writeString(builder, track["artist_name"]);
-            std::string album_name = Json::writeString(builder, track["album_name"]);
-            std::string uri = Json::writeString(builder, track["track_uri"]);
-            Song s = Song(name, album_name, artist, uri);
-            p.AddSong(s);
-            csv_file << s._name << "," << s._album << "," << s._artist << "," << s._uri << endl;
-        }
-        all_playlists.push_back(p);
-    }
-    csv_file.close();
-}
-*/
 int main(int argc, char *argv[])  {
     cout << "Enter 'help' for a list of commands" << endl;
     string command;

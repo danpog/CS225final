@@ -2,6 +2,9 @@
 #include <iostream>
 using namespace std;
 
+/**
+*Override == for song for improved performance
+*/
 bool operator==(const Song& LHS, const Song& RHS)    {
     //return hash<Song&>{}(LHS) == hash<Song&>{}(RHS);
     //return LHS._name == RHS._name && LHS._album == RHS._album && LHS._artist == RHS._artist;

@@ -108,18 +108,18 @@ TEST_CASE("Can find path between nodes")  {
 
 
     // Uncommented to visualize the connections within the graph
-    for (auto y: graph.getGraph()) 
+    /*for (auto y: graph.getGraph()) 
        for (auto x : y.second.GetNeighbors()) 
                cout << y.first << "-"  << x.first->GetArtist() << " " << x.second << endl;
-
+    */
 
     // There exists the following path between each of the following
     vector<string> correct1 = {"\"Shaggy\"", "\"OutKast\"", "\"Usher\""};
     vector<string> output1 = graph.Dijkstras("\"Shaggy\"", "\"Usher\"");
     REQUIRE(correct1 == output1);
 
-    vector<string> correct2 = {"\"Destiny's Child\"", "\"Usher\"", "\"OutKast\""};
-    vector<string> output2= graph.Dijkstras("\"Destiny's Child\"", "\"OutKast\"");
+    vector<string> correct2 = {"\"Destiny's Child\"", "\"OutKast\"", "\"Usher\""};
+    vector<string> output2= graph.Dijkstras("\"Destiny's Child\"", "\"Usher\"");
     REQUIRE(correct2 == output2);
 
     vector<string> correct3 = {"\"Usher\"", "\"OutKast\""};
@@ -164,8 +164,8 @@ TEST_CASE("Can choose the minimum path")  {
 
      // There exists the following path between these two nodes
     // "Soul Asylum" "The Smashing Pumpkins" "Incubus" "The Goo Goo Dolls" with more cost
-    vector<string> correct2 = {"\"Soul Asylum\"", "\"The Smashing Pumpkins\"", "\"The Goo Goo Dolls\"" };
-    vector<string> output2 = graph2.Dijkstras("\"Soul Asylum\"",  "\"The Goo Goo Dolls\"");
+    vector<string> correct2 = {"\"Soul Asylum\"", "\"The Smashing Pumpkins\"", "\"Nirvana\"","\"The Goo Goo Dolls\"" };
+    vector<string> output2 = graph2.Dijkstras("\"Soul Asylum\"", "\"The Goo Goo Dolls\"");
     REQUIRE(correct2 == output2);
 
     vector<string> correct3 = graph2.Dijkstras("\"Tee Grizzley\"", "\"blackbear\"");
