@@ -59,6 +59,8 @@ Note that some of these commands will prompt you for additional parameters. Addi
 
 All output will be printed to the terminal. 
 
+Run the command `generate` in order to generate a graph, no other graph-related commands will function until this is done. When prompted to choose a number of playlists, choose a number between 1-10 (inclusive), as there are 10,000 playlists included in the repository.
+
 **Testing**
 
 Run the following commands:
