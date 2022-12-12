@@ -270,5 +270,5 @@ TEST_CASE("Give Me Something New")  {
     REQUIRE(graph.somethingNew("\"Missy Elliott\"", 1) == "\"Anthony Hamilton\"");
     REQUIRE(graph.somethingNew("\"Missy Elliott\"", 2) == "\"Chrisette Michele\"");
     REQUIRE(graph.somethingNew("\"Missy Elliott\"", 3) == "\"Damian Marley\"");
-    REQUIRE(graph.somethingNew("\"Missy Elliott\"", 4) == "Depth Too Far");
+    REQUIRE(graph.somethingNew("\"Missy Elliott\"", 4) == "Not Enough Connections");
 }

@@ -482,7 +482,7 @@ string Graph::somethingNew(string artist, int distance) {
         }
         pQ.pop();
     }
-    return "Depth Too Far";
+    return "Not Enough Connections";
 }
 
 string Graph::somethingNew(string artist, int distance, vector<string>& visited, string og_artist, int og_distance) {
