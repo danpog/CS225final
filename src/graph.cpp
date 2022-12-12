@@ -194,8 +194,7 @@ Playlist Graph::CreatePlaylist(int num_songs, vector<Song>& preferences)    {
 vector<string> Graph::Dijkstras(string source, string dest) {
     map<string, double> dist;
     map<string, string> prev;
-    set<string> removed;
-    dist[source] = 0;                           // Initialization
+    dist[source] = 0;                                                              
 
     // Min Heap
     typedef pair<double, string> pi;
@@ -203,10 +202,11 @@ vector<string> Graph::Dijkstras(string source, string dest) {
     
     for (auto const& vertex : _graph) {
         if (vertex.first != source) {
-            dist[vertex.first] = INT_MAX;                       // Unknown distance from source to v
-            prev[vertex.first] = "";   
-            pq.push(make_pair(dist[vertex.first], vertex.first));                // Predecessor of v
+            dist[vertex.first] = INT_MAX;     // Unknown distance from source to v
+            prev[vertex.first] = "";          // Predecessor of v
+            pq.push(make_pair(dist[vertex.first], vertex.first));                
         } else {
+
             pq.push(make_pair(dist[source], source));
         }
     }
@@ -215,9 +215,10 @@ vector<string> Graph::Dijkstras(string source, string dest) {
         pi u = pq.top();                       // Best Vertex
         pq.pop();                              // Remove best vertex
         if (dist[u.second] == INT_MAX) {  return vector<string>();  }
-        for (auto const& neighbor: _graph[u.second].GetNeighbors()) {           // Go through all v neighbors of u
-            auto vertex = neighbor.first -> GetArtist();
-            if (vertex == dest) {
+        for (auto const& neighbor: _graph[u.second].GetNeighbors()) {       // Go through all v neighbors of u
+            auto vertex = neighbor.first -> GetArtist();                
+            if (vertex == dest) {            
+                // If we have reached our goal
                 string temp = u.second;
                 vector<string> to_return;
                 to_return.push_back(vertex);
@@ -225,10 +226,12 @@ vector<string> Graph::Dijkstras(string source, string dest) {
                     to_return.push_back(temp);
                     temp = prev[temp];
                 }
+                // Directions are backwards
                 reverse(to_return.begin(), to_return.end());
                 return to_return;
             }
             
+            // Adding neighbors to graph 
             double distance = dist[u.second] == INT_MAX ? 0 : dist[u.second];
             auto temp_dist = distance + (1.0 / _graph[u.second].GetWeight(vertex));
             if (temp_dist < dist[vertex]) {
