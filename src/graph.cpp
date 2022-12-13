@@ -67,8 +67,13 @@ unordered_map<Node*, int>& Graph::FindNeighbors(string artist) {
     return _graph[artist].GetNeighbors();
 }
 
+/**
+* Create a playlist using IDDFS with num_songs. This accepts a vector of Songs used as starting
+* nodes. Ideally, this vector should contain 3-5 Songs. Returns the Playlist.
+*/
 Playlist Graph::CreatePlaylist(int num_songs, vector<Song>& preferences)    {
     int sum = 0;
+    //Find average popularity (or song_tier) of the songs.
     for (Song& s : preferences) {
         int temp = 100*GetNode(s._artist) -> FindSongPlacement(s._name);
         int temp2 = GetNode(s._artist) -> SongCount();
@@ -76,13 +81,16 @@ Playlist Graph::CreatePlaylist(int num_songs, vector<Song>& preferences)    {
     }
     int average = sum/preferences.size();
     vector<Song> playlist;
+    //Iteratively increase depth.
     for (int depth = 0; depth < num_songs; depth++) {
+        //Repeat for each song in preferences.
         for (Song& s : preferences) {
             unordered_map<string, bool> visited;
             Node* node = GetNode(s._artist);
             if (node -> SongCount() == 0) {
                 continue;
             }
+            //Recrusive step
             if (RecurseDFS(node, num_songs, depth, playlist, visited, average))  {
                 return Playlist(playlist);
             }
@@ -143,19 +151,27 @@ vector<string> Graph::Dijkstras(string source, string dest) {
     return vector<string>();
 }
 
+/**
+* Recursive component of the IDDFS. Runs until playlist contains num_songs, or depth < 0. 
+* Ensures that nodes are not visited twice within the same DFS. 
+*/
 bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& playlist, unordered_map<string, bool>& visited, int song_tier)  {
+    //Check if finished
     if ((int)playlist.size() >= num_songs)   {
         return true;
     }
+    //Check depth
     if (depth < 0)  {
         return false;
     }
+    //Add a song from the source node
     playlist.push_back(source -> RequestSong(song_tier));
     visited[source -> GetArtist()] = true;
     unordered_map<Node*, int>& neighbors =  source -> GetNeighbors();
 
     unordered_map<Node*, int>::iterator it;
     if (neighbors.size() > 3)   {
+        //Use only the top 3 neighbors for better results, but do so without trimming neighbors.
         Node* top3[3];
         for (int i = 0; i < 3; i++) {
             top3[i] = NULL;
@@ -182,12 +198,14 @@ bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& pla
             if (visited[n -> GetArtist()])   {
                 continue;
             }
+            //Recurse
             if (RecurseDFS(n, num_songs, depth - 1, playlist, visited, song_tier))   {
                 return true;
             }
         }
     }
     else    {
+        //Run DFS on each neighbor, same as above just without choosing top 3 neighbors.
         for (it = neighbors.begin(); it != neighbors.end(); it++)  {
         if (visited[it -> first -> GetArtist()])   {
             continue;
@@ -200,7 +218,12 @@ bool Graph::RecurseDFS(Node* source, int num_songs, int depth, vector<Song>& pla
     return false;
 }
 
+/**
+* Send a Playlist to Spotify using curl commands, which must be installed. Requires a 
+* user token.
+*/
 bool Graph::SendPlaylistToSpotify(Playlist& playlist, string uid, string playlist_id) {
+    //Spotify only accepts requests of up to 100 songs, so run this for each 100 to handle larger playlists.
     for (int hundredcount = 0; hundredcount < (playlist.SongCount() - 1)/100 + 1; hundredcount++) {
         //std::ifstream myfile ("../terminal_output.txt");
         chrono::milliseconds t_start = chrono::duration_cast< chrono::milliseconds >(
@@ -211,6 +234,7 @@ bool Graph::SendPlaylistToSpotify(Playlist& playlist, string uid, string playlis
         chrono::milliseconds t_final = chrono::duration_cast< chrono::milliseconds >(
         chrono::system_clock::now().time_since_epoch()
         );
+        //Wait for curl command to be complete. It has a chance of failure.
         if (hundredcount != 0) {
             while (((t_final-t_start)/1000.0).count() < 2)    {
                 t_final = chrono::duration_cast< chrono::milliseconds >(
@@ -222,7 +246,7 @@ bool Graph::SendPlaylistToSpotify(Playlist& playlist, string uid, string playlis
         const int PLAYLIST_ID = 3;
         const int URI_START = 6; 
         const int USER_TOKEN = 9;
-
+        //Build command by reading from a file and inserting user input where necessary.
         string command = "";
         fstream file("../src/add_to_playlist_command.txt");
         string s;
@@ -262,12 +286,16 @@ bool Graph::SendPlaylistToSpotify(Playlist& playlist, string uid, string playlis
         command += " > ../terminal_output.txt";
         char* char_array = new char[command.length() + 1];
         strcpy(char_array, command.c_str());
+        //Run the command
         system(char_array);
         delete[] char_array;
     }
     return true;
 }
-
+/**
+* Create a Playlist on Spotify using curl commands, which must be installed. Requires a 
+* user token and user id.
+*/
 string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, string description, bool pub) {
     std::ofstream ofs;
     ofs.open("../terminal_output.txt", std::ofstream::out | std::ofstream::trunc);
@@ -277,7 +305,7 @@ string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, s
     const int PLAYLIST_DESCRIPTION = 12;
     const int PUBLIC = 16;
     const int USER_TOKEN = 19;
-
+    //Build command by reading from a file and inserting user input where necessary. 
     string command = "";
     fstream file("../src/create_playlist_command.txt");
     string s;
@@ -333,15 +361,18 @@ string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, s
     chrono::milliseconds t_final = chrono::duration_cast< chrono::milliseconds >(
     chrono::system_clock::now().time_since_epoch()
     );
+    //Wait so that the command has time to complete
     while (((t_final-t_start)/1000.0).count() < 2)    {
         t_final = chrono::duration_cast< chrono::milliseconds >(
         chrono::system_clock::now().time_since_epoch()
         );
     }
+    //Wait for response
     while (myfile.get() != '{')    {
 
     }
     string line;
+    //Read response and either return "error" or the playlist id.
     while (myfile.good())   {
         std::getline(myfile, line);
         if (line.size() < 8)    {
