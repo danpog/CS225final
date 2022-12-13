@@ -153,7 +153,6 @@ int Node::FindSongPlacement(string title)   {
 * Add song to node, updates ranking of popular songs.
 */ 
 void Node::AddSong(Song& song)    {
-    //Song s = Song(song.GetName(), song.GetAlbum(), song.GetArtist());
     for (size_t i = 0; i < _popular_songs.size(); ++i)  {
         if (_popular_songs[i].first == song)    {
             _popular_songs[i].second++;

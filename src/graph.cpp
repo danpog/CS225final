@@ -4,7 +4,6 @@
 #include <unordered_set>
 #include <stack>
 #include <fstream>
-//#include <json/json.h>
 #include <cstring>
 #include <chrono>
 #include <queue>
@@ -12,60 +11,19 @@
 #include <climits>
 using namespace std;
 
-/*
-Graph::Graph(string file) {
-    Json::Value all_nodes_json;
-    std::ifstream graph_file(file);
-    graph_file >> all_nodes_json;
-    Json::StreamWriterBuilder builder;
-
-    string artist;
-    for (Json::Value node: all_nodes_json["nodes"]) {
-        artist = Json::writeString(builder, node["artist"]);
-        _graph.insert(pair<string, Node>(artist, Node(artist)));
-    }
-
-    Node* artist2;
-    int frequency;
-    string name;
-    string album;
-    string artist3;
-    string uri;
-    int frequency2;
-    for (Json::Value node: all_nodes_json["nodes"]) {
-        artist = Json::writeString(builder, node["artist"]);
-        for (Json::Value neighbor: node["neighbors"]) {
-            artist2 = &_graph[Json::writeString(builder, neighbor["artist"])];
-            frequency = neighbor["frequency"].asInt();
-            _graph[artist].AddNeighborPair(pair<Node*, int>(artist2, frequency));
-        }
-        for (Json::Value song: node["songs"]) {
-            name = Json::writeString(builder, song["name"]);
-            album = Json::writeString(builder, song["album"]);
-            artist3 = Json::writeString(builder, song["artist"]);
-            uri = Json::writeString(builder, song["uri"]);
-            frequency2 = song["frequency"].asInt();
-            Song s = Song(name, album, artist3, uri);
-            _graph[artist].AddSongPair(s, frequency2);
-        }
-    }
-
-}
-*/
-
+//generates a graph given a csv file of playlists from the dataset
 Graph::Graph(string file)   {
     vector<Playlist> a = ParseCSV(file);
     analyze_all_playlists(a);
 }
 
+//generates a graph from a vector of playlists that have already been parsed
 Graph::Graph(vector<Playlist>& playlists)    {
     analyze_all_playlists(playlists);
 }
 
+// Loops through all the playlists so that multiple playlists can be added to the graph at once
 void Graph::analyze_all_playlists(vector<Playlist>& playlists) {
-    /*for(Playlist playlist: playlists) {
-        analyze_playlist(playlist);
-    }*/
     while (!playlists.empty()) {
         Playlist& playlist = playlists[0];
         analyze_playlist(playlist);
@@ -99,75 +57,16 @@ void Graph::update_graph(Playlist& playlist) {
     }
 }
 
+// Returns the node related to a given artist
 Node* Graph::GetNode(string artist) {
     return &_graph[artist];
 }
 
+// Returns the neighbors of a given artist
 unordered_map<Node*, int>& Graph::FindNeighbors(string artist) {
     return _graph[artist].GetNeighbors();
 }
 
-void Graph::save_graph(string file) {
-    ofstream saved_graph;
-
-    saved_graph.open(file);
-    saved_graph << "{";
-    saved_graph << "\"nodes\": [";
-
-    unordered_map<Node*, int> neighbors;
-    unordered_map<Node*, int>::iterator it_neighbors;
-    unordered_map<string, Node>::iterator it;
-    int neighbor_counter;
-    int song_counter;
-
-    for (it = _graph.begin(); it != _graph.end(); it++) {
-        neighbors = _graph[it->first].GetNeighbors();
-        saved_graph << "{";
-        saved_graph << "\"artist\": " << it->first << ",";
-        saved_graph << "\"neighbors\": [";
-        neighbor_counter = 1;
-        for (it_neighbors = neighbors.begin(); it_neighbors != neighbors.end(); it_neighbors++) {
-            saved_graph << "{";
-            saved_graph << "\"artist\": " << it_neighbors->first->GetArtist() << ", ";
-            saved_graph << "\"frequency\": " << it_neighbors->second << "}";
-            if (neighbor_counter < int(neighbors.size())) {
-                saved_graph << ",";
-            }
-            neighbor_counter++;
-        }
-        saved_graph << "],";
-        saved_graph << "\"songs\": [";
-        song_counter = 1;
-        vector<pair<Song,int>> songs = _graph[it->first].GetAllSongs();
-        for (pair<Song,int> song: songs) {
-                saved_graph << "{";
-                saved_graph << "\"name\": " << song.first._name << ", ";
-                saved_graph << "\"album\": " << song.first._album << ", ";
-                saved_graph << "\"artist\": " << song.first._artist << ", ";
-                saved_graph << "\"uri\": " << song.first._uri << ", ";
-                saved_graph << "\"frequency\": " << song.second << "}";
-            if (song_counter < int(songs.size())) {
-                saved_graph << ",";
-            }
-            song_counter++;
-        }
-        saved_graph << "]";
-        saved_graph << "},";
-    }
-    saved_graph << "{}";
-    saved_graph << "]";
-    saved_graph << "}";
-    saved_graph.close();
-
-    /*Json::Value graph_json; 
-    std::ifstream graph_file(file);
-    graph_file >> graph_json;
-    Json::StreamWriterBuilder builder;
-    std::string artist = Json::writeString(builder, graph_json["nodes"][0]["artist"]);
-    std::string neighbor = Json::writeString(builder, graph_json["nodes"][0]["neighbors"][0]["artist"]);
-    int frequency = graph_json["nodes"][0]["neighbors"][0]["frequency"].asInt();
-    */
-}
 Playlist Graph::CreatePlaylist(int num_songs, vector<Song>& preferences)    {
     int sum = 0;
     for (Song& s : preferences) {
@@ -461,12 +360,16 @@ string Graph::CreateSpotifyPlaylist(string user_id, string token, string name, s
     return line;
 }
 
+//recommends a new artist given a starting artist and a distance
 string Graph::somethingNew(string artist, int distance) {
     vector<string> visited;
     visited.push_back(artist);
+    //the only artist within 0 nodes is itself
     if (distance == 0) {
         return artist;
     }
+
+    //store the neighbors in a priority queue to iterate through the most related neighbors
     auto cmp = [](const pair<Node*, int>& lhs, const pair<Node*, int>& rhs)
     { return lhs.second < rhs.second;};
     priority_queue<pair<Node*, int>, vector<pair<Node*, int>>, decltype(cmp) > pQ(cmp);
@@ -476,8 +379,10 @@ string Graph::somethingNew(string artist, int distance) {
 
     while(!pQ.empty()) {
         if (find(visited.begin(), visited.end(), pQ.top().first->GetArtist()) == visited.end()) {
+            //if the neighbor was not visited yet, recurse through it to find a new artist
             visited.push_back(pQ.top().first->GetArtist());
             string returned = somethingNew(pQ.top().first->GetArtist(), distance - 1, visited, artist, distance);
+            //if the returned value is not an empty string, an artist was found
             if (returned != "") {
                 return returned;
             }
@@ -485,16 +390,23 @@ string Graph::somethingNew(string artist, int distance) {
         }
         pQ.pop();
     }
+    //if there is no artist found after recursing through all the neighbors, then there is not a path long enough for the given distance
     return "Not Enough Connections";
 }
 
+//helper function for somethingNew
+//almost the same thing but with extra inputs
 string Graph::somethingNew(string artist, int distance, vector<string>& visited, string og_artist, int og_distance) {
     if (distance == 0) {
+        //if the max distance was reached and the artist is within a certain threshold, return the artist
         if ((og_distance - og_distance * 0.2 - 1) <= 0 || !similarity(og_artist, artist, og_distance - og_distance * 0.4 - 1)) {
             return artist;
         }
+        //if the max distance was reached but the artist is not within the threshold, return an empty string
         return "";
     }
+
+    //store the neighbors in a priority queue to iterate through the most related neighbors
     auto cmp = [](const pair<Node*, int>& lhs, const pair<Node*, int>& rhs)
     { return lhs.second < rhs.second;};
     priority_queue<pair<Node*, int>, vector<pair<Node*, int>>, decltype(cmp) > pQ(cmp);
@@ -504,8 +416,10 @@ string Graph::somethingNew(string artist, int distance, vector<string>& visited,
 
     while(!pQ.empty()) {
         if (find(visited.begin(), visited.end(), pQ.top().first->GetArtist()) == visited.end()) {
+            //if the neighbor was not visited yet, recurse through it to find a new artist
             visited.push_back(pQ.top().first->GetArtist());
             string returned = somethingNew(pQ.top().first->GetArtist(), distance - 1, visited, og_artist, og_distance);
+            //if the returned value is not an empty string, an artist was found
             if (returned != "") {
                 return returned;
             }
@@ -513,19 +427,29 @@ string Graph::somethingNew(string artist, int distance, vector<string>& visited,
         }
         pQ.pop();
     }
+    //if there is no artist found after recursing through all the neighbors, return the empty string
     return "";
 }
 
+//returns a boolean for if an artist is within a given distance of another artist
 bool Graph::similarity(string artist1, string artist2, int distance) {
-    if (distance == 0) {
+    //Two artists cannot be within 0 nodes of each other
+    if (distance <= 0) {
         return false;
     }
+    if (artist1 == artist2) {
+        return true;
+    }
+
     vector<string> path;
     path.push_back(artist1);
+
     for (auto neighbor: this->FindNeighbors(artist1)) {
+        //if one of the first artists neighbors is the second artist, we found the second artist
         if (neighbor.first->GetArtist() == artist2) {
             return true;
         }
+        //otherwise, recurse to keep looking for the second artist
         path.push_back(neighbor.first->GetArtist());
         if(similarity(neighbor.first->GetArtist(), artist2, distance-1, path)) {
             return true;
@@ -533,18 +457,24 @@ bool Graph::similarity(string artist1, string artist2, int distance) {
             path.pop_back();
         }
     }
+    //if the artist was not found, return false
     return false;
 }
 
+//helper function for similarity
+//almost the same thing but takes the path as input
 bool Graph::similarity(string artist1, string artist2, int distance, vector<string>& path) {
+    //if the distance is 0, we recursed too far
     if (distance == 0) {
         return false;
     }
     for (auto neighbor: this->FindNeighbors(artist1)) {
+        //if one of the first artists neighbors is the second artist, we found the second artist
         if (neighbor.first->GetArtist() == artist2) {
             return true;
         }
         if(find(path.begin(), path.end(), neighbor.first->GetArtist()) == path.end()) {
+            //if the neighbor is not in the visited path, recurse through the neighbor to find the second artist
             path.push_back(neighbor.first->GetArtist());
             if(similarity(neighbor.first->GetArtist(), artist2, distance-1, path)) {
                 return true;
@@ -553,5 +483,6 @@ bool Graph::similarity(string artist1, string artist2, int distance, vector<stri
             }
         }
     }
+    //if the second artist was not found, return false
     return false;
 }
