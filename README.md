@@ -4,7 +4,9 @@ Derived from https://www.aicrowd.com/challenges/spotify-million-playlist-dataset
 
 Group: Edan Elazar, Eli Gidron, & Daniel Pogrebinsky
 
-Link to Video: https://mediaspace.illinois.edu/media/t/1_6thg4dro
+Link to Presentation Video: https://mediaspace.illinois.edu/media/t/1_6thg4dro
+
+Link to Demo Video: https://mediaspace.illinois.edu/media/t/1_x5s62xas
 
 ## Class Organization
 
