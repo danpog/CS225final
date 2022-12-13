@@ -48,16 +48,16 @@ Run the following commands:
 `./main`
 
 This will open a command-line interface. The following commands can be used with the varying effects:
-|  Command   | Description                         
-|----------------|-------------------------------|
-|break|ends the program |
-|generate|generates a new graph |
-|find neighbors|prints the neighbors of a given artist|
-|path between|uses Dijkstra's algorithm to find the shortest weighted path between two artists |
-|similarity|uses DFS to check if an artist is within a specified distance of another artist |
-|something new|recommends a new artist at a specified distance (1-10, 1 = most similar, 10 = least similar)|
-|make playlist|generates a playlist from three song preferences, optionally push to spotify |
-|help|show command list|
+|  Command   | Description         | Parameters |               
+|----------------|-------------------------------|------|
+|break|ends the program | None |
+|generate|generates a new graph | # of playlists |
+|find neighbors|prints the neighbors of a given artist| Artist |
+|path between|uses Dijkstra's algorithm to find the shortest weighted path between two artists | Source Artist, Destination Artist |
+|similarity|uses DFS to check if an artist is within a specified distance of another artist | Source Artist, Destination Artist, Distance |
+|something new|recommends a new artist at a specified distance (1-10, 1 = most similar, 10 = least similar)| Artist, Similarity|
+|make playlist|generates a playlist from three song preferences, optionally push to spotify | Playlist Name, # of Songs, Artist (1/3), Song (1/3), Artist(2/3), Song (2/3), Artist (3/3), Song (3/3)|
+|help|show command list| None |
 
 Note that some of these commands will prompt you for additional parameters. Additionally, the commands listed above are case and whitespace insensitive, and will ignore non-alphabetic characters. 
 
