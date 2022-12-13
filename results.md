@@ -4,7 +4,9 @@ Derived from https://www.aicrowd.com/challenges/spotify-million-playlist-dataset
 
 Group: Edan Elazar, Eli Gidron, & Daniel Pogrebinsky
 
-Link to Video: https://mediaspace.illinois.edu/media/t/1_6thg4dro
+Link to Presentation Video: https://mediaspace.illinois.edu/media/t/1_6thg4dro
+
+Link to Demo Video: https://mediaspace.illinois.edu/media/t/1_x5s62xas
 
 ## Dijsktas Algorithm 
 
@@ -25,4 +27,10 @@ The purpose of the IDDFS was to generate a playlist by visiting neighboring node
 
 We have two methods of testing this algorithm. The first is to use a smaller playlist dataset that we can parse manually and ensure that the expected results are present. We also built a graph by hand (instead of parsing a dataset), and ensured the the results were as expected. Finally, although qualititative, we ran the algorithm on a large dataset and noticed that the artists and songs chosen do indeed make sense, and inputted artists appear at the expected frequencies.
 
+## DFS
 
+The purpose of the DFS is to check whether two nodes are within a specified distance. It starts at a specific artist and recurses through the nodes until it either visited all the nodes or found the second artist. The max recursion depth is the specified distance to ensure that the artist must be found within that given distance.
+
+**Testing**
+
+The first test case for the DFS has a graph that we mannually build so that we can test the output of the function and veryify that it worked properly. The second test case uses the algorithm on a large dataset and verifies that the output makes sense for what we consider to be similar artists as well as very different ones.
