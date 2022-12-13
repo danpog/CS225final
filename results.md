@@ -8,6 +8,13 @@ Link to Presentation Video: https://mediaspace.illinois.edu/media/t/1_6thg4dro
 
 Link to Demo Video: https://mediaspace.illinois.edu/media/t/1_x5s62xas
 
+
+## Leading Question
+
+Given a dataset of playlists are we able to accurately construct our own playlist? 
+
+Yes, we were able to accomplish this. The dataset that we are given is a list of playlists. Each of these playlists contains a set of songs along with some other information such as unique id, duration, album name. We constructed a relevant graph from the playlist data and then using various traversal methods to build a new playlist.
+
 ## Dijsktas Algorithm 
 
 The purpose of Dijkstra's algorithm is to find the minimum path between two nodes. In this particular implementation we return the path that would be taken for the shortest path. This effectively models a link between two artists with their most correlated artists.
