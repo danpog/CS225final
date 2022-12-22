@@ -118,19 +118,15 @@ TEST_CASE("Can find path between nodes")  {
     vector<string> output1 = graph.Dijkstras("\"Shaggy\"", "\"Usher\"");
     REQUIRE(correct1 == output1);
 
-    vector<string> correct2 = {"\"Destiny's Child\"", "\"OutKast\"", "\"Usher\""};
-    vector<string> output2= graph.Dijkstras("\"Destiny's Child\"", "\"Usher\"");
+    vector<string> correct2 = {"\"Usher\"", "\"OutKast\""};
+    vector<string> output2 = graph.Dijkstras("\"Usher\"", "\"OutKast\"");
     REQUIRE(correct2 == output2);
 
-    vector<string> correct3 = {"\"Usher\"", "\"OutKast\""};
-    vector<string> output3 = graph.Dijkstras("\"Usher\"", "\"OutKast\"");
-    REQUIRE(correct3 == output3);
-
     // There are no paths between the following nodes
-    vector<string> output4 = graph.Dijkstras("\"Shaggy\"", "\"Justin Timberlake\"");
-    vector<string> output5 = graph.Dijkstras("\"Shaggy\"", "\"Destiny's Child\"");
+    vector<string> output3 = graph.Dijkstras("\"Shaggy\"", "\"Justin Timberlake\"");
+    vector<string> output4 = graph.Dijkstras("\"Shaggy\"", "\"Destiny's Child\"");
+    REQUIRE(output3.empty());
     REQUIRE(output4.empty());
-    REQUIRE(output5.empty());
 }
 
 TEST_CASE("Can choose the minimum path")  {
